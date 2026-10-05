@@ -95,6 +95,19 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 16px 24
 .page { display: none; }
 .page.on { display: block; animation: rise .25s ease-out; }
 @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.hero {
+  display: flex; align-items: center; gap: 22px; margin: 0 0 16px; padding: 14px 22px; border-radius: var(--r);
+  background: linear-gradient(110deg, rgba(247,189,71,.16), rgba(124,196,255,.08) 60%, rgba(124,196,255,.02));
+  border: 1px solid rgba(247,189,71,.45); box-shadow: 0 14px 34px rgba(0,0,0,.28);
+}
+.hero-txt { flex: 1; min-width: 0; }
+.hero-tag { display: inline-block; padding: 3px 12px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-size: 15px; font-weight: 900; margin-bottom: 6px; }
+.hero h1 { margin: 0; font-size: 30px; font-weight: 900; letter-spacing: -.6px; white-space: nowrap; overflow: hidden; }
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero p { margin: 4px 0 0; font-size: 18px; color: var(--muted); font-weight: 600; white-space: nowrap; overflow: hidden; }
+.hero-art { flex: none; width: 300px; text-align: center; }
+.hero-art svg { width: 100%; height: auto; display: block; }
+.hero-cap { font-size: 14px; font-weight: 800; color: var(--air); white-space: nowrap; }
 .phead { display: flex; align-items: baseline; gap: 14px; margin: 0 0 14px; white-space: nowrap; overflow: hidden; }
 .phead h1 { margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -.5px; }
 .phead p { margin: 0; color: var(--muted); font-size: 17px; overflow: hidden; text-overflow: ellipsis; }
@@ -376,6 +389,7 @@ footer { text-align: center; color: var(--dim); font-size: 14px; padding: 10px; 
     <div class="who" id="who">반과 모둠을 고르세요</div>
     <span class="pill" id="savePill"></span>
     <button class="btn small ghost iconbtn" id="soundBtn" title="소리 켜기/끄기">🔊</button>
+    <button class="btn small ghost" id="fsBtn">⛶ 전체화면</button>
     <a class="btn small ghost" href="#teacher">👩‍🏫 교사 대시보드</a>
   </header>
   <nav class="steps">
@@ -395,7 +409,14 @@ footer { text-align: center; color: var(--dim); font-size: 14px; padding: 10px; 
 <main>
   <!-- 1쪽 -->
   <section class="page" data-page="1">
-    <div class="phead"><h1>모둠과 역할</h1><p>반과 모둠을 고르고, 역할마다 이름을 쓰세요.</p></div>
+    <div class="hero">
+      <div class="hero-txt">
+        <span class="hero-tag">오늘의 미션</span>
+        <h1 id="heroTitle">우리 반 <em>8개 모둠</em>의 점 <em>40개</em>로 보일 법칙을 검증해 보자!</h1>
+        <p id="heroSub">피스톤을 누르면 기체의 압력은 어떻게 될까요? 반과 모둠을 고르고 시작해요.</p>
+      </div>
+      <div class="hero-art"><svg id="heroDots" viewBox="0 0 292 118" role="img" aria-label="8개 모둠의 측정점 40개"></svg><div class="hero-cap" id="heroCap">점 40개가 모이면 무엇이 보일까?</div></div>
+    </div>
     <div class="grid2">
       <div class="card">
         <h2><span class="hi">🏫</span>우리 반</h2>
@@ -608,7 +629,7 @@ footer { text-align: center; color: var(--dim); font-size: 14px; padding: 10px; 
 // ================================================================
 
 // 1) Apps Script를 [웹 앱]으로 배포한 뒤 받은 주소를 붙여 넣으세요.
-const API_URL = https://script.google.com/macros/s/AKfycbxMRlI6JaIUx6WZTDM9MD6rTwrx3t5kcjgbEgP6AQOi2RFpgvCMkbBmDIxpg5eJFOB0/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxMRlI6JaIUx6WZTDM9MD6rTwrx3t5kcjgbEgP6AQOi2RFpgvCMkbBmDIxpg5eJFOB0/exec';
 
 // 2) 앱 이름 — 바꾸고 싶으면 이 줄만 고치면 학생·교사 화면 모두 바뀝니다.
 const APP_TITLE = '우리반 보일법칙 검증 실험';
@@ -920,7 +941,7 @@ const lsKey = (c, g) => `${LS}${c}_${g}`;
 function writeLocal(c, g, d) { try { localStorage.setItem(lsKey(c, g), JSON.stringify(d)); } catch (e) {} }
 function saveLocal() {
   if (S.cls && S.grp) writeLocal(S.cls, S.grp, S.d);
-  try { localStorage.setItem(LS + 'cur', JSON.stringify({ c: S.cls, g: S.grp, page: S.page })); } catch (e) {}
+  try { sessionStorage.setItem(LS + 'cur', JSON.stringify({ c: S.cls, g: S.grp, page: S.page })); } catch (e) {}
 }
 function readLocal(c, g) {
   try {
@@ -1200,7 +1221,22 @@ function buildChips() {
   $('#classChips').innerHTML = Array.from({ length: CLASS_COUNT }, (_, i) => `<button class="chip" data-c="${i + 1}">${i + 1}반</button>`).join('');
   $('#groupChips').innerHTML = GROUPS.map(g => `<button class="chip g" data-g="${g.n}" style="--gc:${g.color}"><span class="sw"></span>${g.n}모둠<small>${g.name}</small></button>`).join('');
 }
+function renderHero() {
+  const W = 34, x0 = 24;
+  let s = '';
+  GROUPS.forEach((g, c) => {
+    const own = g.n === S.selG, x = x0 + c * W, dim = S.selG && !own;
+    if (own) s += `<rect x="${x - 14}" y="2" width="28" height="100" rx="14" fill="${g.color}" fill-opacity=".16" stroke="${g.color}" stroke-width="2"/>`;
+    for (let r = 0; r < 5; r++) {
+      s += `<circle cx="${x}" cy="${14 + r * 19}" r="${own ? 7.5 : 6.5}" fill="${g.color}" opacity="${dim ? 0.3 : 0.95}"/>`;
+    }
+    s += `<text x="${x}" y="115" text-anchor="middle" font-size="12" font-weight="800" fill="${own ? g.color : '#a7b4d0'}">${g.n}</text>`;
+  });
+  $('#heroDots').innerHTML = s;
+  $('#heroCap').textContent = S.selG ? `${S.selG}모둠의 점 5개도 여기에 들어가요!` : '점 40개가 모이면 무엇이 보일까?';
+}
 function paintChips() {
+  renderHero();
   $$('#classChips .chip').forEach(b => b.classList.toggle('on', +b.dataset.c === S.selC));
   $$('#groupChips .chip').forEach(b => b.classList.toggle('on', +b.dataset.g === S.selG));
 }
@@ -1462,7 +1498,16 @@ window.addEventListener('pagehide', () => {
     navigator.sendBeacon(API_URL, new Blob([JSON.stringify({ action: 'save', cls: S.cls, grp: S.grp, data: payload() })], { type: 'text/plain;charset=utf-8' }));
   } catch (e) {}
 });
-window.addEventListener('resize', () => fitText($('#brand'), 12));
+function fitAll() { fitText($('#brand'), 12); fitText($('#heroTitle'), 16); fitText($('#heroSub'), 12); }
+window.addEventListener('resize', fitAll);
+// 전체화면
+function fsSync() { $('#fsBtn').textContent = document.fullscreenElement ? '↙ 전체화면 끝내기' : '⛶ 전체화면'; setTimeout(fitAll, 100); }
+$('#fsBtn').onclick = () => {
+  Sound.play('tap');
+  if (document.fullscreenElement) document.exitFullscreen();
+  else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => toast('이 화면에서는 전체화면을 쓸 수 없어요.', 'warn'));
+};
+document.addEventListener('fullscreenchange', fsSync);
 
 // ================= 시작 =================
 document.title = APP_TITLE;
@@ -1473,10 +1518,11 @@ plot = createPlot($('#plot'));
 if (DEMO) $('#demoBanner').hidden = false;
 else if (!apiReady()) setPill('서버 주소 미설정', 'warn');
 let cur = null;
-try { cur = JSON.parse(localStorage.getItem(LS + 'cur') || 'null'); } catch (e) {}
-if (cur && cur.c && cur.g) { enter(cur.c, cur.g); go(cur.page || 1, true); }
+try { cur = JSON.parse(sessionStorage.getItem(LS + 'cur') || 'null'); } catch (e) {}
+if (cur && cur.c && cur.g) { enter(cur.c, cur.g); go(1, true); }   // 항상 첫 화면(반·모둠 선택)부터
 else { renderAll(); go(1, true); }
 effortWasOk = S.d.effort.trim().length >= MIN_EFFORT_LEN;
+renderHero(); setTimeout(fitAll, 50);
 fitText($('#brand'), 12);
 })();
 </script>
