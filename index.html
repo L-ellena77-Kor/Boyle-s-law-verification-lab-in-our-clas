@@ -108,6 +108,36 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 16px 24
 .hero-art { flex: none; width: 300px; text-align: center; }
 .hero-art svg { width: 100%; height: auto; display: block; }
 .hero-cap { font-size: 14px; font-weight: 800; color: var(--air); white-space: nowrap; }
+.intro {
+  display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr); gap: 28px; align-items: center;
+  padding: 28px 34px; border-radius: 22px;
+  background: linear-gradient(115deg, rgba(247,189,71,.18), rgba(124,196,255,.08) 55%, rgba(124,196,255,.03));
+  border: 1px solid rgba(247,189,71,.5); box-shadow: 0 18px 40px rgba(0,0,0,.32);
+}
+.intro-txt { min-width: 0; }
+.intro h1 { margin: 10px 0 16px; font-size: 50px; font-weight: 900; letter-spacing: -1.2px; line-height: 1.15; white-space: nowrap; overflow: hidden; }
+.intro h1 em { font-style: normal; color: var(--accent); }
+.intro p { margin: 0 0 10px; font-size: 21px; line-height: 1.65; word-break: keep-all; }
+.intro p b { color: var(--accent); }
+.intro p.q { font-size: 23px; font-weight: 800; color: var(--air); }
+.intro-art { text-align: center; padding: 14px; border-radius: 18px; background: rgba(11,20,38,.55); border: 1px solid var(--line); }
+.intro-art svg { width: 100%; height: auto; display: block; }
+.intro-eq { margin-top: 6px; font-size: 19px; font-weight: 800; color: var(--muted); white-space: nowrap; }
+.intro-eq b { color: var(--accent); font-size: 24px; }
+#heroDots.anim circle { animation: pop .45s cubic-bezier(.3,1.6,.5,1) backwards; animation-delay: var(--d); transform-box: fill-box; transform-origin: center; }
+@keyframes pop { from { transform: scale(0); opacity: 0; } }
+.todo { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 18px; }
+.todo button {
+  display: flex; gap: 12px; align-items: center; text-align: left; padding: 14px 16px; border-radius: 14px; cursor: pointer;
+  background: linear-gradient(180deg, rgba(31,47,82,.92), rgba(20,32,57,.94)); border: 1px solid var(--line); min-width: 0;
+}
+.todo button:hover { border-color: var(--line2); }
+.todo .tn { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; font-size: 18px; background: var(--panel2); border: 2px solid var(--line2); }
+.todo b { display: block; font-size: 19px; white-space: nowrap; }
+.todo .ts { display: block; font-size: 15px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.start-row { display: flex; justify-content: center; margin-top: 20px; }
+#startBtn { font-size: 25px; padding: 16px 54px; border-radius: 16px; }
+@media (max-width: 1100px) { .intro { grid-template-columns: 1fr; } .todo { grid-template-columns: repeat(2, 1fr); } .intro h1 { font-size: 38px; } }
 .phead { display: flex; align-items: baseline; gap: 14px; margin: 0 0 14px; white-space: nowrap; overflow: hidden; }
 .phead h1 { margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -.5px; }
 .phead p { margin: 0; color: var(--muted); font-size: 17px; overflow: hidden; text-overflow: ellipsis; }
@@ -393,6 +423,7 @@ footer { text-align: center; color: var(--dim); font-size: 14px; padding: 10px; 
     <a class="btn small ghost" href="#teacher">👩‍🏫 교사 대시보드</a>
   </header>
   <nav class="steps">
+    <button class="step" data-page="0"><span class="n">0</span><span class="lbl">시작</span></button>
     <button class="step" data-page="1"><span class="n">1</span><span class="lbl">모둠과 역할</span></button>
     <button class="step" data-page="2"><span class="n">2</span><span class="lbl">데이터 입력</span></button>
     <button class="step" data-page="3"><span class="n">3</span><span class="lbl">오차 줄이기</span></button>
@@ -407,16 +438,34 @@ footer { text-align: center; color: var(--dim); font-size: 14px; padding: 10px; 
 <div class="banner lock" id="lockBanner" hidden>🔒 최종 제출을 마쳤어요. 고쳐야 하면 선생님께 잠금 해제를 부탁하세요.</div>
 
 <main>
+  <!-- 0쪽: 인트로 -->
+  <section class="page" data-page="0">
+    <div class="intro">
+      <div class="intro-txt">
+        <span class="hero-tag">오늘의 미션</span>
+        <h1 id="introTitle">우리 반 점 <em>40개</em>로 <em>보일 법칙</em> 검증하기</h1>
+        <p class="q">🤔 주사기 속 공기를 꾹 누르면, 공기의 압력은 어떻게 변할까요?</p>
+        <p>우리 모둠은 정해진 부피 <b>5곳</b>에서 압력을 재서 <b>점 5개</b>를 만들어요.</p>
+        <p>8개 모둠의 점이 모두 모이면 <b>점 40개!</b> 한 그래프에 모인 점들이 <b>어떤 모양을 그리는지</b> 살펴보면서, 보일 법칙이 정말 맞는지 우리 손으로 확인해 봐요.</p>
+      </div>
+      <div class="intro-art">
+        <svg id="heroDots" class="anim" viewBox="0 0 292 118" role="img" aria-label="8개 모둠의 측정점 40개"></svg>
+        <div class="hero-cap" id="heroCap">점 40개가 모이면 무엇이 보일까?</div>
+        <div class="intro-eq">점 5개 × 8모둠 = <b>40개</b></div>
+      </div>
+    </div>
+    <div class="todo">
+      <button data-goto="1"><span class="tn">1</span><div><b>모둠과 역할</b><span class="ts">반·모둠 고르고 이름 쓰기</span></div></button>
+      <button data-goto="2"><span class="tn">2</span><div><b>데이터 입력</b><span class="ts">실험 전 확인, 압력 재기</span></div></button>
+      <button data-goto="3"><span class="tn">3</span><div><b>오차 줄이기</b><span class="ts">정확하게 재려고 한 노력</span></div></button>
+      <button data-goto="4"><span class="tn">4</span><div><b>학급 정리</b><span class="ts">40개 점 그래프 보고 결론</span></div></button>
+    </div>
+    <div class="start-row"><button class="btn primary" id="startBtn">실험 시작하기 ▶</button></div>
+  </section>
+
   <!-- 1쪽 -->
   <section class="page" data-page="1">
-    <div class="hero">
-      <div class="hero-txt">
-        <span class="hero-tag">오늘의 미션</span>
-        <h1 id="heroTitle">우리 반 <em>8개 모둠</em>의 점 <em>40개</em>로 보일 법칙을 검증해 보자!</h1>
-        <p id="heroSub">피스톤을 누르면 기체의 압력은 어떻게 될까요? 반과 모둠을 고르고 시작해요.</p>
-      </div>
-      <div class="hero-art"><svg id="heroDots" viewBox="0 0 292 118" role="img" aria-label="8개 모둠의 측정점 40개"></svg><div class="hero-cap" id="heroCap">점 40개가 모이면 무엇이 보일까?</div></div>
-    </div>
+    <div class="phead"><h1>모둠과 역할</h1><p>반과 모둠을 고르고, 역할마다 이름을 쓰세요.</p></div>
     <div class="grid2">
       <div class="card">
         <h2><span class="hi">🏫</span>우리 반</h2>
@@ -618,7 +667,7 @@ footer { text-align: center; color: var(--dim); font-size: 14px; padding: 10px; 
 
 </div>
 
-<footer>Copyright 2026 오효선</footer>
+<footer>Copyright 2026 엘레나</footer>
 <div id="toasts"></div>
 
 <script>
@@ -629,7 +678,7 @@ footer { text-align: center; color: var(--dim); font-size: 14px; padding: 10px; 
 // ================================================================
 
 // 1) Apps Script를 [웹 앱]으로 배포한 뒤 받은 주소를 붙여 넣으세요.
-const API_URL = 'https://script.google.com/macros/s/AKfycbxMRlI6JaIUx6WZTDM9MD6rTwrx3t5kcjgbEgP6AQOi2RFpgvCMkbBmDIxpg5eJFOB0/exec';
+const API_URL = 'https://script.google.com/macros/s/여기에_배포_ID/exec';
 
 // 2) 앱 이름 — 바꾸고 싶으면 이 줄만 고치면 학생·교사 화면 모두 바뀝니다.
 const APP_TITLE = '우리반 보일법칙 검증 실험';
@@ -1006,6 +1055,7 @@ function fmtWarn(raw) {
 
 // 지금 이 쪽에서 다음에 입력할 곳
 function targetFor(page) {
+  if (page === 0) return { el: '#startBtn' };
   const d = S.d;
   if (page === 1) {
     if (!S.selC) return { el: '#classChips' };
@@ -1228,7 +1278,7 @@ function renderHero() {
     const own = g.n === S.selG, x = x0 + c * W, dim = S.selG && !own;
     if (own) s += `<rect x="${x - 14}" y="2" width="28" height="100" rx="14" fill="${g.color}" fill-opacity=".16" stroke="${g.color}" stroke-width="2"/>`;
     for (let r = 0; r < 5; r++) {
-      s += `<circle cx="${x}" cy="${14 + r * 19}" r="${own ? 7.5 : 6.5}" fill="${g.color}" opacity="${dim ? 0.3 : 0.95}"/>`;
+      s += `<circle cx="${x}" cy="${14 + r * 19}" r="${own ? 7.5 : 6.5}" fill="${g.color}" opacity="${dim ? 0.3 : 0.95}" style="--d:${(c * 5 + r) * 0.045}s"/>`;
     }
     s += `<text x="${x}" y="115" text-anchor="middle" font-size="12" font-weight="800" fill="${own ? g.color : '#a7b4d0'}">${g.n}</text>`;
   });
@@ -1367,13 +1417,13 @@ function updatePlot() {
 }
 
 function go(n, quiet) {
-  n = Math.max(1, Math.min(4, n));
+  n = Math.max(0, Math.min(4, n));
   if (n > 1 && !S.grp) { Sound.play('warn'); toast('먼저 반과 모둠을 고르세요.', 'warn'); n = 1; }
   if (!quiet && n !== S.page) Sound.play('page');
   S.page = n;
   $$('.page').forEach(p => p.classList.toggle('on', +p.dataset.page === n));
   $$('.step').forEach(b => b.classList.toggle('on', +b.dataset.page === n));
-  $('#prevBtn').disabled = n === 1;
+  $('#prevBtn').disabled = n === 0;
   $('#nextBtn').hidden = n === 4;
   saveLocal(); window.scrollTo(0, 0); updateNext();
   if (n === 2) renderRig();
@@ -1498,7 +1548,10 @@ window.addEventListener('pagehide', () => {
     navigator.sendBeacon(API_URL, new Blob([JSON.stringify({ action: 'save', cls: S.cls, grp: S.grp, data: payload() })], { type: 'text/plain;charset=utf-8' }));
   } catch (e) {}
 });
-function fitAll() { fitText($('#brand'), 12); fitText($('#heroTitle'), 16); fitText($('#heroSub'), 12); }
+function fitAll() { fitText($('#brand'), 12); fitText($('#introTitle'), 20); }
+$('#startBtn').onclick = () => go(1);
+$$('[data-goto]').forEach(b => b.onclick = () => go(+b.dataset.goto));
+setTimeout(() => $('#heroDots').classList.remove('anim'), 2600);
 window.addEventListener('resize', fitAll);
 // 전체화면
 function fsSync() { $('#fsBtn').textContent = document.fullscreenElement ? '↙ 전체화면 끝내기' : '⛶ 전체화면'; setTimeout(fitAll, 100); }
@@ -1519,8 +1572,8 @@ if (DEMO) $('#demoBanner').hidden = false;
 else if (!apiReady()) setPill('서버 주소 미설정', 'warn');
 let cur = null;
 try { cur = JSON.parse(sessionStorage.getItem(LS + 'cur') || 'null'); } catch (e) {}
-if (cur && cur.c && cur.g) { enter(cur.c, cur.g); go(1, true); }   // 항상 첫 화면(반·모둠 선택)부터
-else { renderAll(); go(1, true); }
+if (cur && cur.c && cur.g) { enter(cur.c, cur.g); go(0, true); }   // 항상 인트로 화면부터
+else { renderAll(); go(0, true); }
 effortWasOk = S.d.effort.trim().length >= MIN_EFFORT_LEN;
 renderHero(); setTimeout(fitAll, 50);
 fitText($('#brand'), 12);
