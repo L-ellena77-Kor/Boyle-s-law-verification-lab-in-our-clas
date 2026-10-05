@@ -1,0 +1,1835 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>보일법칙 실험보고서</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+/* 깊은 남색 실험실 + 압력계 바늘의 호박색(amber) + 공기 입자의 하늘색 */
+:root {
+  --bg: #0a1120;
+  --panel: #142039;
+  --panel-hi: #1b2a4a;
+  --panel2: #1f2f52;
+  --field: #0b1426;
+  --line: #2b3d66;
+  --line2: #3b5185;
+  --text: #f1f5fc;
+  --muted: #a7b4d0;
+  --dim: #6f7fa6;
+  --accent: #f7bd47;
+  --accent-ink: #2a1b00;
+  --air: #7cc4ff;
+  --ok: #6fe08a;
+  --warn: #ffd166;
+  --bad: #ff7777;
+  --r: 16px;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+html { font-size: 18px; }
+body {
+  min-height: 100vh; display: flex; flex-direction: column; color: var(--text);
+  font-family: 'Pretendard', 'Noto Sans KR', system-ui, sans-serif; line-height: 1.5;
+  font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased;
+  background:
+    radial-gradient(900px 520px at 6% -8%, rgba(124,196,255,.13), transparent 62%),
+    radial-gradient(800px 560px at 102% 4%, rgba(247,189,71,.09), transparent 58%),
+    linear-gradient(rgba(255,255,255,.028) 1px, transparent 1px) 0 0 / 30px 30px,
+    linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px) 0 0 / 30px 30px,
+    var(--bg);
+  background-attachment: fixed;
+}
+button, input, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--air); outline-offset: 2px; }
+[hidden] { display: none !important; }
+.nowrap { white-space: nowrap; overflow: hidden; }
+.muted { color: var(--muted); }
+.small { font-size: 14px; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* ---------- 상단 ---------- */
+.head { position: sticky; top: 0; z-index: 20; background: rgba(10,17,32,.86); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.topbar { display: flex; align-items: center; gap: 12px; padding: 10px 24px; }
+.brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 24px; min-width: 0; flex: 1 1 auto; letter-spacing: -.4px; }
+.mark {
+  flex: none; display: inline-grid; place-items: center; width: 44px; height: 38px; border-radius: 10px;
+  background: linear-gradient(135deg, #ffd27a, var(--accent)); color: var(--accent-ink); font-size: 17px; font-weight: 900;
+  box-shadow: 0 0 18px rgba(247,189,71,.35);
+}
+.brand .sub { flex: none; font-size: 16px; font-weight: 600; color: var(--muted); padding: 3px 10px; border: 1px solid var(--line2); border-radius: 999px; }
+.who {
+  flex: none; display: flex; align-items: center; gap: 9px; font-weight: 800; font-size: 18px;
+  padding: 6px 16px; border-radius: 999px; background: var(--panel2); border: 1px solid var(--line2); white-space: nowrap;
+}
+.dot { width: 14px; height: 14px; border-radius: 50%; background: var(--gc, #888); display: inline-block; flex: none; box-shadow: 0 0 10px var(--gc, transparent); }
+.pill { flex: none; font-size: 14px; font-weight: 600; padding: 5px 12px; border-radius: 999px; white-space: nowrap; border: 1px solid var(--line2); color: var(--muted); }
+.pill:empty { display: none; }
+.pill.ok { color: var(--ok); border-color: rgba(111,224,138,.45); }
+.pill.busy { color: var(--accent); border-color: rgba(247,189,71,.45); }
+.pill.bad { color: var(--bad); border-color: rgba(255,119,119,.5); }
+.pill.warn { color: var(--warn); border-color: rgba(255,209,102,.5); }
+.pill.none { color: var(--dim); }
+.iconbtn { width: 42px; height: 42px; padding: 0 !important; justify-content: center; font-size: 20px; }
+
+/* ---------- 단계 ---------- */
+.steps { display: flex; align-items: center; gap: 8px; padding: 8px 24px 10px; }
+.step {
+  display: flex; align-items: center; gap: 10px; padding: 8px 18px 8px 8px; border-radius: 999px; font-size: 17px;
+  border: 1px solid var(--line); background: rgba(20,32,57,.7); cursor: pointer; color: var(--muted); font-weight: 700; white-space: nowrap;
+}
+.step .n { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 15px; font-weight: 900; background: var(--panel2); border: 2px solid var(--line2); }
+.step:hover { color: var(--text); border-color: var(--line2); }
+.step.on { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); box-shadow: 0 0 20px rgba(247,189,71,.3); }
+.step.on .n { background: var(--accent-ink); color: var(--accent); border-color: var(--accent-ink); }
+.step.done:not(.on) { color: var(--text); }
+.step.done:not(.on) .n { background: rgba(111,224,138,.18); color: var(--ok); border-color: var(--ok); }
+.steps .spacer { flex: 1; }
+.steps .btn { font-size: 18px; padding: 10px 22px; }
+
+/* ---------- 본문 ---------- */
+main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 16px 24px 20px; }
+.page { display: none; }
+.page.on { display: block; animation: rise .25s ease-out; }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.phead { display: flex; align-items: baseline; gap: 14px; margin: 0 0 14px; white-space: nowrap; overflow: hidden; }
+.phead h1 { margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -.5px; }
+.phead p { margin: 0; color: var(--muted); font-size: 17px; overflow: hidden; text-overflow: ellipsis; }
+.card {
+  position: relative; border-radius: var(--r); padding: 18px 22px;
+  background: linear-gradient(180deg, rgba(31,47,82,.92), rgba(20,32,57,.94));
+  border: 1px solid var(--line); box-shadow: 0 14px 34px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.06);
+}
+.card h2 { margin: 0 0 14px; font-size: 21px; font-weight: 800; display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+.card h2 .hi { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: rgba(247,189,71,.14); font-size: 19px; flex: none; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: stretch; }
+.grid-p2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 18px; align-items: start; }
+.wait-note { display: none; margin: -4px 0 8px; padding: 10px 14px; border-radius: 12px; font-size: 17px; font-weight: 800; color: #ffb3b3; background: rgba(255,119,119,.1); border: 1px dashed rgba(255,119,119,.55); }
+#tableCard.waiting .wait-note { display: block; }
+#tableCard.waiting .dtable { opacity: .42; }
+.dtable input.num { width: 118px; }
+.fmt-note { margin: -4px 0 8px; padding: 9px 14px; border-radius: 12px; font-size: 17px; font-weight: 700; color: var(--text); background: rgba(124,196,255,.09); border: 1px solid rgba(124,196,255,.4); white-space: nowrap; overflow: hidden; }
+.fmt-note b { color: var(--air); }
+.fmt-hint { margin-top: 6px; font-size: 15px; font-weight: 700; color: var(--air); }
+input.num.fmt { border-color: var(--warn) !important; box-shadow: 0 0 0 4px rgba(255,209,102,.18) !important; }
+.retWrap { display: inline-flex; align-items: center; gap: 7px; padding: 9px 12px; border-radius: 12px; border: 2px solid var(--line2); background: var(--field); cursor: pointer; font-weight: 800; font-size: 16px; white-space: nowrap; color: var(--muted); }
+.retWrap input { width: 24px; height: 24px; accent-color: var(--accent); margin: 0; }
+.retWrap.filled { border-color: rgba(111,224,138,.6); color: var(--ok); }
+.retWrap:has(input:disabled) { opacity: .4; cursor: not-allowed; }
+.retWrap.next { color: var(--accent); }
+.grid-p3 { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr); gap: 18px; align-items: stretch; }
+.stack { display: flex; flex-direction: column; gap: 18px; }
+.label { font-size: 16px; color: var(--muted); margin: 16px 0 9px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+.label:first-of-type { margin-top: 0; }
+
+.banner { max-width: 1392px; margin: 12px auto 0; width: calc(100% - 48px); padding: 11px 18px; border-radius: 12px; font-weight: 800; font-size: 17px; }
+.banner.lock { background: rgba(247,189,71,.1); border: 1px solid rgba(247,189,71,.5); color: var(--accent); }
+.banner.demo { background: rgba(255,209,102,.07); border: 1px dashed rgba(255,209,102,.55); color: var(--warn); }
+
+/* ---------- 다음에 입력할 곳 강조 ---------- */
+.next {
+  outline: 3px solid var(--accent) !important; outline-offset: 4px;
+  box-shadow: 0 0 0 8px rgba(247,189,71,.13), 0 0 26px rgba(247,189,71,.4) !important;
+  animation: nextGlow 1.5s ease-in-out infinite;
+}
+@keyframes nextGlow {
+  0%, 100% { box-shadow: 0 0 0 6px rgba(247,189,71,.12), 0 0 18px rgba(247,189,71,.3); }
+  50% { box-shadow: 0 0 0 10px rgba(247,189,71,.2), 0 0 32px rgba(247,189,71,.55); }
+}
+.chips.next, .checklist.next, .check.next { border-radius: 12px; }
+
+/* ---------- 칩 ---------- */
+.chips { display: flex; flex-wrap: wrap; gap: 9px; }
+.chips.cls { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.chips.grp { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.chip {
+  padding: 12px 10px; border-radius: 12px; border: 2px solid var(--line2); background: var(--panel2);
+  cursor: pointer; font-weight: 800; font-size: 19px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap;
+  transition: transform .12s, border-color .12s;
+}
+.chip:hover:not(:disabled) { border-color: var(--muted); transform: translateY(-1px); }
+.chip:disabled { opacity: .4; cursor: not-allowed; }
+.chip small { font-weight: 600; opacity: .8; font-size: 14px; }
+.chip.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); box-shadow: 0 0 18px rgba(247,189,71,.35); }
+.chip.g { flex-direction: column; gap: 4px; padding: 12px 8px; border-color: color-mix(in srgb, var(--gc) 35%, var(--line2)); }
+.chip.g .sw { width: 100%; height: 8px; border-radius: 4px; background: var(--gc); opacity: .85; }
+.chip.g.on { background: color-mix(in srgb, var(--gc) 24%, var(--panel2)); color: var(--text); border-color: var(--gc); box-shadow: 0 0 0 3px color-mix(in srgb, var(--gc) 40%, transparent), 0 0 22px color-mix(in srgb, var(--gc) 40%, transparent); }
+
+/* ---------- 버튼 ---------- */
+.btn {
+  padding: 10px 18px; border-radius: 12px; border: 1px solid var(--line2); background: var(--panel2); color: var(--text);
+  cursor: pointer; font-weight: 800; white-space: nowrap; display: inline-flex; align-items: center; gap: 7px; text-decoration: none;
+  transition: filter .12s, border-color .12s, transform .12s;
+}
+.btn:hover:not(:disabled) { border-color: var(--muted); }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn.primary { background: linear-gradient(180deg, #ffd27a, var(--accent)); color: var(--accent-ink); border-color: var(--accent); }
+.btn.primary:hover:not(:disabled) { filter: brightness(1.06); }
+.btn.danger { color: var(--bad); border-color: rgba(255,119,119,.45); }
+.btn.ghost { background: rgba(255,255,255,.03); }
+.btn.small { padding: 7px 13px; font-size: 15px; }
+.btn.block { width: 100%; justify-content: center; padding: 16px; font-size: 21px; }
+.btn:disabled { opacity: .38; cursor: not-allowed; }
+.spin .ico { display: inline-block; animation: spin .9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- 입력 ---------- */
+.field, textarea {
+  width: 100%; padding: 11px 14px; border-radius: 12px; border: 2px solid var(--line2); background: var(--field); outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.field { font-size: 21px; font-weight: 700; }
+.field:focus, textarea:focus, input.num:focus { border-color: var(--air); box-shadow: 0 0 0 4px rgba(124,196,255,.2); }
+.field.filled, input.num.filled, textarea.filled { border-color: rgba(111,224,138,.55); }
+textarea { resize: vertical; line-height: 1.7; font-size: 20px; }
+::placeholder { color: var(--dim); font-weight: 500; }
+input.num {
+  width: 150px; padding: 8px 10px; border-radius: 12px; border: 2px solid var(--line2); background: var(--field); outline: none;
+  text-align: center; font-size: 28px; font-weight: 900;
+}
+input.num.sm { width: 100px; font-size: 19px; padding: 6px 8px; }
+input.bad { border-color: var(--bad) !important; box-shadow: 0 0 0 4px rgba(255,119,119,.2) !important; }
+input:disabled, textarea:disabled { opacity: .6; cursor: not-allowed; }
+.check { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; white-space: nowrap; padding: 4px 6px; }
+.check input { width: 22px; height: 22px; accent-color: var(--accent); flex: none; }
+.check.big { font-size: 20px; padding: 10px 12px; border-radius: 12px; background: var(--field); border: 2px solid var(--line2); width: 100%; }
+.check.big input { width: 28px; height: 28px; }
+.check.big.filled { border-color: rgba(111,224,138,.55); }
+
+/* ---------- 1쪽 ---------- */
+.roles { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.role { display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 14px; background: rgba(11,20,38,.55); border: 1px solid var(--line); }
+.role .rt { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 800; color: var(--muted); white-space: nowrap; }
+.role .ico { font-size: 26px; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px; background: var(--panel2); flex: none; }
+.three-box { display: flex; align-items: center; gap: 12px; margin-top: 16px; padding: 12px 14px; border-radius: 12px; background: rgba(124,196,255,.07); border: 1px dashed rgba(124,196,255,.4); font-size: 16px; color: var(--muted); }
+.three-box .check { color: var(--text); font-size: 18px; }
+
+/* ---------- 2쪽 ---------- */
+.guide3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 16px; }
+.g3 { display: flex; gap: 12px; align-items: flex-start; padding: 13px 16px; border-radius: 14px; background: linear-gradient(180deg, rgba(247,189,71,.1), rgba(247,189,71,.04)); border: 1px solid rgba(247,189,71,.35); font-size: 16px; line-height: 1.5; }
+.g3 .gn { flex: none; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font-weight: 900; }
+.g3 b { color: var(--accent); }
+.g3.alert { background: linear-gradient(180deg, rgba(255,119,119,.16), rgba(255,119,119,.06)); border: 2px solid rgba(255,119,119,.7); }
+.g3.alert strong { display: block; color: #ffb3b3; font-size: 18px; margin-bottom: 2px; }
+.g3.alert b { color: #ffd166; }
+.g3.alert .gn { background: var(--bad); color: #2a0000; font-size: 20px; animation: alertBeat 1.4s ease-in-out infinite; }
+@keyframes alertBeat { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,119,119,.6); } 50% { transform: scale(1.12); box-shadow: 0 0 0 8px rgba(255,119,119,0); } }
+.dtable { width: 100%; border-collapse: separate; border-spacing: 0 6px; }
+.dtable th { font-size: 16px; color: var(--muted); font-weight: 700; padding: 0 8px 2px; white-space: nowrap; }
+.dtable td { text-align: center; padding: 5px 8px; background: rgba(11,20,38,.5); transition: background .2s; }
+.dtable td:first-child { border-radius: 12px 0 0 12px; }
+.dtable td:last-child { border-radius: 0 12px 12px 0; }
+.dtable td.idx { color: var(--dim); font-weight: 900; font-size: 19px; width: 54px; }
+.dtable tr.filled td.idx { color: var(--ok); }
+.dtable tr.next-row td { background: rgba(247,189,71,.13); }
+.dtable tr.next-row td.idx { color: var(--accent); }
+.dtable td.vol { font-size: 30px; font-weight: 900; }
+.dtable td.vol small { font-size: 16px; color: var(--muted); font-weight: 600; margin-left: 4px; }
+.dtable td.pv { font-size: 27px; font-weight: 800; color: var(--accent); min-width: 100px; }
+.dtable td.pv.empty { color: var(--dim); }
+.rig-head { display: flex; align-items: baseline; gap: 10px; white-space: nowrap; font-size: 17px; color: var(--muted); font-weight: 700; margin-bottom: 4px; }
+.rig-head b { font-size: 34px; color: var(--accent); font-weight: 900; }
+.rig-head .act { color: var(--text); }
+#rig { width: 100%; height: auto; display: block; }
+.row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 14px; font-size: 20px; font-weight: 700; }
+.msg { margin-top: 12px; font-size: 17px; min-height: 26px; font-weight: 700; }
+.msg.warn { color: var(--warn); } .msg.ok { color: var(--ok); } .msg.bad { color: var(--bad); }
+
+/* ---------- 3쪽 ---------- */
+.count { text-align: right; color: var(--muted); font-size: 16px; margin-top: 8px; font-weight: 700; }
+.count.ok { color: var(--ok); }
+.tips { display: grid; gap: 10px; }
+.tip { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 12px; background: rgba(11,20,38,.55); border: 1px solid var(--line); font-size: 17px; }
+.tip .ti { font-size: 26px; flex: none; width: 40px; text-align: center; }
+.tip b { display: block; font-size: 18px; }
+.tip span { color: var(--muted); font-size: 15px; }
+
+/* ---------- 4쪽 ---------- */
+.grid-plot { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(340px, 1fr); gap: 18px; align-items: start; }
+.plot-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.plot-head h2 { margin: 0; flex: 1; }
+.legend { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 10px; }
+.lg {
+  display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; white-space: nowrap;
+  border: 1px solid var(--line2); background: var(--panel2); cursor: pointer; font-size: 15px; font-weight: 800;
+}
+.lg .cnt { font-weight: 600; color: var(--muted); font-size: 13px; }
+.lg.own { border: 2px solid #fff; }
+.lg.off { opacity: .3; }
+.plotwrap { position: relative; height: calc(100vh - 360px); min-height: 320px; }
+.plotwrap canvas { width: 100%; height: 100%; display: block; border-radius: 12px; background: var(--field); border: 1px solid var(--line); touch-action: none; }
+.q { font-size: 22px; font-weight: 900; margin-bottom: 12px; }
+.grade-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.grade-row .btn { font-size: 19px; padding: 11px 22px; }
+.grade-row .att { margin-left: auto; font-size: 15px; color: var(--muted); font-weight: 700; }
+.grade { margin-top: 12px; padding: 12px 14px; border-radius: 12px; font-size: 17px; background: rgba(11,20,38,.55); color: var(--muted); }
+.grade.ok { color: var(--ok); background: rgba(111,224,138,.1); border: 1px solid rgba(111,224,138,.35); font-weight: 800; }
+.grade.bad { color: #ffdada; background: rgba(255,119,119,.1); border: 1px solid rgba(255,119,119,.35); }
+.grade.warn { color: var(--warn); background: rgba(255,209,102,.08); }
+.checklist { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 7px; }
+.checklist li { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 12px; background: rgba(11,20,38,.55); font-size: 17px; font-weight: 700; white-space: nowrap; }
+.checklist .mk { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 15px; font-weight: 900; flex: none; }
+.checklist li.ok .mk { background: rgba(111,224,138,.2); color: var(--ok); }
+.checklist li.no .mk { background: rgba(255,119,119,.18); color: var(--bad); }
+.checklist .det { margin-left: auto; color: var(--muted); font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
+.checklist .go { flex: none; font-size: 14px; font-weight: 800; color: var(--accent-ink); background: var(--accent); border: none; border-radius: 8px; cursor: pointer; padding: 3px 9px; }
+.submit-hint { text-align: center; font-size: 16px; color: var(--muted); margin-top: 10px; min-height: 24px; font-weight: 700; }
+
+/* ---------- 하단·알림 ---------- */
+footer { text-align: center; color: var(--dim); font-size: 14px; padding: 10px; border-top: 1px solid var(--line); background: rgba(10,17,32,.7); }
+#toasts { position: fixed; right: 20px; bottom: 50px; display: flex; flex-direction: column; gap: 9px; z-index: 60; pointer-events: none; }
+.toast {
+  max-width: 460px; padding: 13px 17px; border-radius: 14px; background: var(--panel-hi); border: 1px solid var(--line2);
+  box-shadow: 0 14px 34px rgba(0,0,0,.5); font-size: 17px; font-weight: 700; transition: opacity .3s; animation: rise .2s ease-out;
+}
+.toast.ok { border-left: 5px solid var(--ok); } .toast.bad { border-left: 5px solid var(--bad); } .toast.warn { border-left: 5px solid var(--warn); }
+
+/* ---------- 교사 대시보드 ---------- */
+.login { flex: 1; display: grid; place-items: center; padding: 40px 20px; }
+.login .card { width: min(460px, 100%); padding: 28px; }
+.login h2 { font-size: 26px; }
+.login .field { margin-bottom: 14px; font-size: 22px; }
+.login .msg { color: var(--bad); }
+.urlbox {
+  display: flex; align-items: center; gap: 8px; min-width: 0; flex: 0 1 540px;
+  padding: 5px 6px 5px 14px; border-radius: 999px; background: var(--panel2); border: 1px solid var(--line2);
+}
+.urlbox .k { flex: none; font-size: 14px; color: var(--muted); font-weight: 800; }
+.urlbox .url { flex: 1; min-width: 0; font-size: 15px; color: var(--accent); font-weight: 700; white-space: nowrap; overflow: hidden; }
+.toolbar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.toolbar .chips .chip { font-size: 17px; padding: 9px 12px; }
+.toolbar .tools { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+.toolbar .stamp { font-size: 14px; color: var(--muted); white-space: nowrap; }
+.sandbox-bar {
+  margin-top: 12px; padding: 11px 16px; border-radius: 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  background: rgba(255,209,102,.08); border: 1px dashed rgba(255,209,102,.6); color: var(--warn); font-weight: 800;
+}
+.sandbox-bar .sp { flex: 1; }
+.sec { font-size: 22px; font-weight: 900; margin: 24px 0 12px; display: flex; align-items: center; gap: 12px; }
+.sec .muted { font-size: 15px; font-weight: 600; }
+.gcards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.gcard {
+  background: linear-gradient(180deg, rgba(31,47,82,.92), rgba(20,32,57,.94)); border: 1px solid var(--line); border-top: 5px solid var(--gc);
+  border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; box-shadow: 0 10px 26px rgba(0,0,0,.25);
+}
+.gcard.flag { border-color: rgba(255,119,119,.7); border-top-color: var(--gc); box-shadow: 0 0 0 1px rgba(255,119,119,.4), 0 10px 26px rgba(0,0,0,.25); }
+.gc-head { display: flex; align-items: center; gap: 8px; white-space: nowrap; font-size: 19px; }
+.gc-head .pill { margin-left: auto; }
+.gc-names { font-size: 14px; color: var(--muted); min-height: 21px; text-overflow: ellipsis; }
+.reqs { display: flex; flex-wrap: wrap; gap: 5px; }
+.req { font-size: 13px; font-weight: 700; padding: 3px 8px; border-radius: 7px; background: rgba(11,20,38,.6); color: var(--dim); white-space: nowrap; }
+.req.ok { color: var(--ok); background: rgba(111,224,138,.12); }
+.flagline { font-size: 14px; color: var(--bad); font-weight: 800; }
+.gc-foot { display: flex; align-items: center; gap: 5px; margin-top: auto; padding-top: 4px; }
+.gc-foot .time { margin-right: auto; font-size: 13px; color: var(--dim); white-space: nowrap; }
+.ttable { width: 100%; border-collapse: collapse; }
+.ttable th { color: var(--muted); font-weight: 700; font-size: 14px; padding: 5px 3px; border-bottom: 1px solid var(--line); }
+.ttable td { padding: 5px 3px; text-align: center; border-bottom: 1px solid rgba(255,255,255,.05); line-height: 1.2; }
+.ttable td.g { font-weight: 900; text-align: left; white-space: nowrap; padding-left: 9px; font-size: 17px; }
+.ttable .c-v { color: var(--dim); font-size: 12px; }
+.ttable .c-p { font-size: 17px; font-weight: 800; }
+.ttable .c-pv { font-size: 12px; color: var(--accent); min-height: 14px; font-weight: 700; }
+.ttable td.bad { background: rgba(255,119,119,.17); }
+.ttable td.bad .c-pv { color: var(--bad); font-weight: 900; }
+.ttable tr.flag td.g { box-shadow: inset 4px 0 var(--bad); }
+.table-note { font-size: 14px; color: var(--muted); margin-top: 10px; }
+.ecards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.ecard { background: linear-gradient(180deg, rgba(31,47,82,.92), rgba(20,32,57,.94)); border: 1px solid var(--line); border-left: 5px solid var(--gc); border-radius: 14px; padding: 12px 16px; }
+.ec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 18px; }
+.ec-head .pill { margin-left: auto; }
+.ec-l { font-size: 13px; color: var(--muted); font-weight: 800; margin-top: 8px; }
+.ec-t { font-size: 17px; white-space: pre-wrap; word-break: keep-all; }
+.modal { position: fixed; inset: 0; background: rgba(4,8,18,.75); display: grid; place-items: center; z-index: 50; padding: 20px; }
+.modal .card { width: min(860px, 100%); max-height: 94vh; overflow: auto; }
+.modal .field { font-size: 17px; padding: 8px 11px; }
+.egrid { display: grid; grid-template-columns: auto 1fr; gap: 8px 10px; align-items: center; font-size: 15px; font-weight: 700; }
+.eps { display: grid; gap: 8px; }
+.epr { display: flex; align-items: center; gap: 10px; font-weight: 800; }
+.epr span { width: 64px; color: var(--muted); }
+.modal-foot { display: flex; align-items: center; gap: 8px; margin-top: 18px; }
+.modal-foot .muted { margin-right: auto; font-size: 14px; }
+
+@media (max-width: 1100px) {
+  .gcards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-plot, .grid2, .grid-p2, .grid-p3, .ecards, .guide3 { grid-template-columns: 1fr; }
+  .plotwrap { height: 60vh; }
+}
+@media (max-width: 700px) {
+  html { font-size: 16px; }
+  .roles { grid-template-columns: 1fr; }
+  .steps .lbl { display: none; }
+  .chips.cls { grid-template-columns: repeat(4, 1fr); }
+  .gcards { grid-template-columns: 1fr; }
+}
+
+</style>
+</head>
+<body>
+<div id="studentApp">
+
+<div class="head">
+  <header class="topbar">
+    <div class="brand nowrap" id="brand"><span class="mark">PV</span><span id="appTitle"></span><span class="sub">실험보고서</span></div>
+    <div class="who" id="who">반과 모둠을 고르세요</div>
+    <span class="pill" id="savePill"></span>
+    <button class="btn small ghost iconbtn" id="soundBtn" title="소리 켜기/끄기">🔊</button>
+    <a class="btn small ghost" href="#teacher">👩‍🏫 교사 대시보드</a>
+  </header>
+  <nav class="steps">
+    <button class="step" data-page="1"><span class="n">1</span><span class="lbl">모둠과 역할</span></button>
+    <button class="step" data-page="2"><span class="n">2</span><span class="lbl">데이터 입력</span></button>
+    <button class="step" data-page="3"><span class="n">3</span><span class="lbl">오차 줄이기</span></button>
+    <button class="step" data-page="4"><span class="n">4</span><span class="lbl">학급 정리·제출</span></button>
+    <span class="spacer"></span>
+    <button class="btn ghost" id="prevBtn">◀ 이전</button>
+    <button class="btn primary" id="nextBtn">다음 ▶</button>
+  </nav>
+</div>
+
+<div class="banner demo" id="demoBanner" hidden>미리보기 모드예요. 입력한 내용은 시트에 저장되지 않아요.</div>
+<div class="banner lock" id="lockBanner" hidden>🔒 최종 제출을 마쳤어요. 고쳐야 하면 선생님께 잠금 해제를 부탁하세요.</div>
+
+<main>
+  <!-- 1쪽 -->
+  <section class="page" data-page="1">
+    <div class="phead"><h1>모둠과 역할</h1><p>반과 모둠을 고르고, 역할마다 이름을 쓰세요.</p></div>
+    <div class="grid2">
+      <div class="card">
+        <h2><span class="hi">🏫</span>우리 반</h2>
+        <div class="chips cls" id="classChips"></div>
+        <h2 style="margin-top:22px"><span class="hi">👥</span>우리 모둠</h2>
+        <div class="chips grp" id="groupChips"></div>
+      </div>
+      <div class="card">
+        <h2><span class="hi">🧑‍🔬</span>모둠 역할</h2>
+        <div class="roles">
+          <label class="role"><span class="rt"><span class="ico">💻</span>크롬북 입력</span><input class="field lockable" data-role="chromebook" maxlength="20" placeholder="이름" autocomplete="off"></label>
+          <label class="role"><span class="rt"><span class="ico">📝</span><span id="recorderLabel">데이터 기록</span></span><input class="field lockable" data-role="recorder" maxlength="20" placeholder="이름" autocomplete="off"></label>
+          <label class="role"><span class="rt"><span class="ico">💉</span>주사기 조작</span><input class="field lockable" data-role="syringe" maxlength="20" placeholder="이름" autocomplete="off"></label>
+          <label class="role" id="roleSupplies"><span class="rt"><span class="ico">📦</span>준비물 수령</span><input class="field lockable" data-role="supplies" maxlength="20" placeholder="이름" autocomplete="off"></label>
+        </div>
+        <div class="three-box"><label class="check"><input type="checkbox" id="three" class="lockable"> 3명 모둠</label><span>한 사람이 데이터 기록과 준비물 수령을 함께 맡아요.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2쪽 -->
+  <section class="page" data-page="2">
+    <div class="guide3">
+      <div class="g3"><span class="gn">1</span><div>피스톤을 <b>30 mL</b>에 맞추고 압력계가 <b>1기압</b>인지 확인한 뒤 콕을 잠가요.</div></div>
+      <div class="g3 alert"><span class="gn">2</span><div><strong>잠깐! 실험 전에 꼭 확인하세요.</strong> 피스톤을 <b>눌렀다가 다시 30 mL로 당겨</b> 압력계가 <b>1기압</b>으로 돌아오는지 확인하고, 아래 왼쪽 칸에 압력을 쓰고 <b>체크</b>하세요.</div></div>
+      <div class="g3"><span class="gn">3</span><div><b>작은 부피부터</b> 하나씩: 부피를 맞춰 압력을 기록하고, <b>30 mL로 되돌려 1기압</b>인지 확인해 <b>복귀 체크</b>를 누른 뒤 다음 부피로 가요. 압력은 <b>소수 둘째 자리까지</b> 써요.</div></div>
+    </div>
+    <div class="grid-p2">
+      <div class="stack">
+        <div class="card" id="preCard">
+          <h2><span class="hi">🔒</span>실험 전 공기 누설 확인</h2>
+          <div class="row" style="margin-top:0">눌렀다가 30 mL로 당긴 압력 <input id="leakP" class="num lockable" inputmode="decimal" autocomplete="off" placeholder="1.00"> 기압</div>
+          <div class="fmt-hint">소수 둘째 자리까지 써요. 예: 1.00</div>
+          <label class="check big" id="leakChkWrap" style="margin-top:12px"><input type="checkbox" id="leakChk" class="lockable"> 1기압으로 돌아오는 것을 확인함</label>
+          <div class="msg" id="leakMsg"></div>
+        </div>
+        <div class="card">
+          <div class="rig-head nowrap"><span id="rigLabel">실험 전 확인</span><b id="rigV">30</b><span class="act">mL에서 1기압 확인</span></div>
+          <svg id="rig" viewBox="0 0 560 182" role="img" aria-label="주사기와 압력계"></svg>
+        </div>
+      </div>
+      <div class="card" id="tableCard">
+        <h2 id="grpTag">측정 결과</h2>
+        <div class="fmt-note">✏️ 압력은 <b>소수 둘째 자리까지</b> 쓰세요. 예: <b>1.50</b>, <b>0.87</b>, <b>1.00</b></div>
+        <div class="wait-note">🔒 왼쪽의 실험 전 확인을 먼저 끝내면 입력할 수 있어요.</div>
+        <table class="dtable">
+          <thead><tr><th>순서</th><th>부피 V</th><th>압력 P (기압)</th><th>P × V</th><th>30 mL 복귀</th></tr></thead>
+          <tbody id="dataBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3쪽 -->
+  <section class="page" data-page="3">
+    <div class="phead"><h1>실험 오차를 줄이기 위한 노력</h1><p>정확하게 측정하려고 우리 모둠이 주의한 점을 구체적으로 쓰세요.</p></div>
+    <div class="grid-p3">
+      <div class="card">
+        <textarea id="effort" class="lockable" rows="11" maxlength="2000" placeholder="주사기 내부의 온도를 일정하게 하기 위해서..."></textarea>
+        <div class="count" id="effortCount"></div>
+      </div>
+      <div class="card">
+        <h2><span class="hi">💡</span>이런 점을 떠올려 보세요</h2>
+        <div class="tips">
+          <div class="tip"><span class="ti">🌡️</span><div><b>온도</b><span>주사기를 손으로 오래 쥐었나요?</span></div></div>
+          <div class="tip"><span class="ti">👀</span><div><b>눈금 읽기</b><span>어느 방향에서 눈금을 읽었나요?</span></div></div>
+          <div class="tip"><span class="ti">🔒</span><div><b>공기 누설</b><span>콕과 연결 부분을 어떻게 확인했나요?</span></div></div>
+          <div class="tip"><span class="ti">🐢</span><div><b>피스톤 속도</b><span>얼마나 빠르게 움직였나요?</span></div></div>
+          <div class="tip"><span class="ti">⏱️</span><div><b>읽는 때</b><span>바늘이 멈춘 뒤에 읽었나요?</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4쪽 -->
+  <section class="page" data-page="4">
+    <div class="grid-plot">
+      <div class="card">
+        <div class="plot-head">
+          <h2><span class="hi">📈</span>우리 학급 실험 정리</h2>
+          <button class="btn small" id="refreshBtn"><span class="ico">↻</span> 새로고침</button>
+        </div>
+        <div class="legend" id="legend"></div>
+        <div class="plotwrap"><canvas id="plot"></canvas></div>
+      </div>
+      <div class="stack">
+        <div class="card">
+          <h2><span class="hi">✍️</span>결론</h2>
+          <div class="q">기체의 압력과 부피는 어떤 관계인가?</div>
+          <textarea id="conclusion" class="lockable" rows="2" maxlength="300" placeholder="그래프를 보고 한 문장으로 써 보세요."></textarea>
+          <div class="grade-row"><button class="btn" id="gradeBtn">채점하기</button><span class="att" id="attemptInfo"></span></div>
+          <div class="grade" id="gradeMsg"></div>
+        </div>
+        <div class="card">
+          <h2><span class="hi">📮</span>최종 제출</h2>
+          <ul class="checklist" id="checklist"></ul>
+          <button class="btn primary block" id="submitBtn" disabled>최종 제출</button>
+          <div class="submit-hint" id="submitHint"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+</div>
+
+<div id="teacherApp" hidden>
+
+<div class="head">
+<header class="topbar">
+  <div class="brand nowrap" id="tBrand"><span class="mark">PV</span><span id="tAppTitle"></span><span class="sub">교사 대시보드</span></div>
+  <div class="urlbox"><span class="k">학생 주소</span><span class="url" id="stuUrl"></span><button class="btn small" id="copyUrl">복사</button></div>
+  <a class="btn small ghost" href="#app">🧪 학생 앱</a>
+  <button class="btn small ghost" id="logoutBtn" hidden>로그아웃</button>
+</header>
+</div>
+
+<!-- 로그인 -->
+<section class="login" id="loginView">
+  <div class="card">
+    <h2><span class="hi">🔐</span>교사 로그인</h2>
+    <input class="field" id="tPw" type="password" placeholder="비밀번호" autocomplete="current-password" autofocus>
+    <button class="btn primary block" id="loginBtn">로그인</button>
+    <div class="msg" id="loginMsg"></div>
+  </div>
+</section>
+
+<!-- 대시보드 -->
+<main id="dashView" hidden>
+  <div class="card toolbar">
+    <div class="chips" id="clsChips"></div>
+    <div class="tools">
+      <button class="btn small" id="tRefresh"><span class="ico">↻</span> 새로고침</button>
+      <span class="stamp" id="tStamp"></span>
+      <label class="check small"><input type="checkbox" id="autoChk"> 20초마다 자동</label>
+      <label class="check small"><input type="checkbox" id="sbChk"> 샌드박스</label>
+      <button class="btn small" id="csvCls">CSV 이 반</button>
+      <button class="btn small" id="csvAll">CSV 전체</button>
+      <a class="btn small" id="previewLink" target="_blank" rel="noopener">학생 화면 미리보기</a>
+    </div>
+  </div>
+  <div class="sandbox-bar" id="sbBar" hidden>
+    🧪 샌드박스 모드: 여기서 입력·수정·삭제한 내용은 시트에 저장되지 않아요.
+    <span class="sp"></span>
+    <button class="btn small" id="sbCopy">현재 반 데이터 복사</button>
+    <button class="btn small" id="sbFill">예시 데이터 채우기</button>
+    <button class="btn small danger" id="sbClear">모두 비우기</button>
+  </div>
+
+  <h3 class="sec">모둠별 진행·제출 현황 <span class="muted" id="clsTitle"></span></h3>
+  <div class="gcards" id="gcards"></div>
+
+  <h3 class="sec">학급 그래프와 데이터 <span class="muted">빨간 고리와 빨간 칸은 P×V가 기준 범위를 벗어난 점이에요</span></h3>
+  <div class="grid-plot">
+    <div class="card">
+      <div class="legend" id="tLegend"></div>
+      <div class="plotwrap"><canvas id="tPlot"></canvas></div>
+    </div>
+    <div class="card">
+      <table class="ttable" id="ttable"></table>
+      <div class="table-note" id="tableNote"></div>
+    </div>
+  </div>
+
+  <h3 class="sec">오차를 줄이기 위한 노력과 결론</h3>
+  <div class="ecards" id="ecards"></div>
+</main>
+
+<!-- 수정 창 -->
+<div class="modal" id="editModal" hidden>
+  <div class="card">
+    <h2 id="editTitle"></h2>
+    <div class="grid2">
+      <div>
+        <div class="label">역할 이름 <label class="check small"><input type="checkbox" id="eThree"> 3명 모둠</label></div>
+        <div class="egrid">
+          <span>크롬북 입력</span><input class="field" id="eR_chromebook" maxlength="20">
+          <span id="eRecLbl">데이터 기록</span><input class="field" id="eR_recorder" maxlength="20">
+          <span>주사기 조작</span><input class="field" id="eR_syringe" maxlength="20">
+          <span id="eSupLbl">준비물 수령</span><input class="field" id="eR_supplies" maxlength="20">
+        </div>
+        <div class="label">누설 확인</div>
+        <div class="row" style="margin-top:0"><label class="check"><input type="checkbox" id="eLeakChk"> 1기압 확인함</label><input class="num sm" id="eLeakP" inputmode="decimal"> 기압</div>
+        <div class="label">상태</div>
+        <div class="row" style="margin-top:0"><label class="check"><input type="checkbox" id="eSub"> 제출 완료(잠금)</label> 채점 시도 <input class="num sm" id="eAtt" type="number" min="0" style="width:72px"> 회</div>
+      </div>
+      <div>
+        <div class="label">압력 (기압)</div>
+        <div class="eps" id="ePs"></div>
+      </div>
+    </div>
+    <div class="label">오차를 줄이기 위한 노력</div>
+    <textarea id="eEffort" rows="3" maxlength="2000"></textarea>
+    <div class="label">결론</div>
+    <input class="field" id="eConcl" maxlength="300">
+    <div class="modal-foot"><span class="muted" id="eNote"></span><button class="btn ghost" id="eCancel">취소</button><button class="btn primary" id="eSave">저장</button></div>
+  </div>
+</div>
+
+</div>
+
+<footer>Copyright 2026 오효선</footer>
+<div id="toasts"></div>
+
+<script>
+/* ===== 설정: 선생님이 고칠 곳 ===== */
+// ================================================================
+//  설정 파일 — 선생님이 고칠 곳은 이 파일뿐입니다.
+//  ※ 교사 비밀번호는 여기에 절대 넣지 마세요. (Apps Script 스크립트 속성에만 저장)
+// ================================================================
+
+// 1) Apps Script를 [웹 앱]으로 배포한 뒤 받은 주소를 붙여 넣으세요.
+const API_URL = https://script.google.com/macros/s/AKfycbxMRlI6JaIUx6WZTDM9MD6rTwrx3t5kcjgbEgP6AQOi2RFpgvCMkbBmDIxpg5eJFOB0/exec';
+
+// 2) 앱 이름 — 바꾸고 싶으면 이 줄만 고치면 학생·교사 화면 모두 바뀝니다.
+const APP_TITLE = '우리반 보일법칙 검증 실험';
+
+// 3) 기본 설정
+const CLASS_COUNT = 11;      // 반 수 (Code.gs의 CLASS_COUNT와 같게)
+const PV_TARGET = 30;        // 30 mL × 1기압
+const PV_TOL = 0.05;         // ±5% → 28.5 ~ 31.5 를 벗어나면 교사 화면에 강조
+const LEAK_TOL = 0.005;      // 누설 확인 압력이 1기압에서 이보다 크게 벗어나면 '누설 의심'
+const MIN_EFFORT_LEN = 10;   // '오차 줄이기 노력' 최소 글자 수 (Code.gs와 같게)
+
+// 4) 모둠별 색과 부피 (작은 순) — Code.gs의 VOLUMES와 같게 유지
+const GROUPS = [
+  { n: 1, name: '빨강', color: '#ff6b6b', v: [16, 22, 29, 36, 45] },
+  { n: 2, name: '주황', color: '#ffa94d', v: [17, 23, 31, 38, 42] },
+  { n: 3, name: '노랑', color: '#ffe066', v: [18, 24, 32, 40, 43] },
+  { n: 4, name: '초록', color: '#69db7c', v: [19, 25, 32, 37, 44] },
+  { n: 5, name: '파랑', color: '#4dabf7', v: [20, 26, 34, 38, 45] },
+  { n: 6, name: '남색', color: '#7f8cff', v: [21, 24, 33, 39, 46] },
+  { n: 7, name: '보라', color: '#cc8cff', v: [19, 27, 34, 40, 47] },
+  { n: 8, name: '핑크', color: '#ff8cc6', v: [21, 28, 35, 41, 48] },
+];
+
+</script>
+<script>
+// 공통 함수 — 학생 화면(index.html)과 교사 화면(teacher.html)이 함께 씁니다.
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const gInfo = n => GROUPS[n - 1];
+const fin = x => typeof x === 'number' && isFinite(x);
+
+function apiReady() { return !!API_URL && !API_URL.includes('여기에'); }
+
+// 모든 서버 통신은 백그라운드 fetch (text/plain → CORS 사전요청 없음)
+async function api(action, body = {}) {
+  if (!apiReady()) throw new Error('config.js에 API_URL이 설정되지 않았어요');
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(Object.assign({ action }, body)),
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+
+// 압력 입력 해석: 빈칸 → null, 잘못된 값 → NaN, 정상 → 숫자
+function parseP(raw) {
+  const s = String(raw ?? '').trim().replace(',', '.');
+  if (!s) return null;
+  if (!/^\d*\.?\d+$/.test(s)) return NaN;
+  const v = parseFloat(s);
+  return v > 0 && v < 10 ? v : NaN;
+}
+function round(x, d = 2) { const k = 10 ** d; return Math.round(x * k) / k; }
+function pvOf(p, v) { return fin(p) ? round(p * v, 2) : null; }
+function pvBad(pv) {
+  if (pv == null) return false;
+  const lo = PV_TARGET * (1 - PV_TOL), hi = PV_TARGET * (1 + PV_TOL);
+  return pv < lo - 1e-9 || pv > hi + 1e-9;
+}
+function leakBad(lp) { return fin(lp) && Math.abs(lp - 1) > LEAK_TOL + 1e-9; }
+function hhmm(d = new Date()) { return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); }
+function nowStr() {
+  const d = new Date(), p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// ---------- 결론 채점 ----------
+// 띄어쓰기·문장부호·어미는 따지지 않고 '반비례'가 들어 있으면 정답.
+// 단, '반비례하지 않는다', '반비례가 아니다'처럼 부정하면 오답.
+function normConclusion(t) { return String(t || '').replace(/[\s.,!?~·…'"“”‘’()\[\]{}:;\-_\/]/g, ''); }
+function gradeConclusion(t) {
+  const s = normConclusion(t);
+  if (!s) return { correct: false, kind: 'empty' };
+  const i = s.indexOf('반비례');
+  if (i >= 0) {
+    const tail = s.slice(i + 3, i + 11);
+    if (/(않|아니|아님|없|안)/.test(tail)) return { correct: false, kind: 'negated' };
+    return { correct: true, kind: 'ok' };
+  }
+  if (s.includes('비례')) return { correct: false, kind: 'proportional' };
+  if (/(감소|줄어|작아|낮아|반대|커지|높아|증가|늘어)/.test(s)) return { correct: false, kind: 'direction' };
+  return { correct: false, kind: 'other' };
+}
+// 힌트 — 정답 단어는 절대 알려주지 않음
+const HINTS = {
+  proportional: '부피가 커질 때 압력은 커지나요, 작아지나요? 그래프의 점들이 어느 쪽으로 움직이는지 다시 보세요.',
+  direction: '변화의 방향은 잘 찾았어요! 2쪽 표의 P×V 값이 어떻게 되는지 보고, 두 양의 관계를 수학 용어로 표현해 보세요.',
+  negated: '그래프 모양과 2쪽의 P×V 값을 다시 살펴보세요. 두 양 사이에 일정한 규칙이 보이나요?',
+  other: [
+    '그래프에서 부피가 커지면 압력은 어떻게 변하나요?',
+    '2쪽 표의 P×V 값을 보세요. 부피가 달라져도 거의 같은 값이 나오나요?',
+    '부피가 2배가 되면 압력은 몇 배가 될까요? 이런 관계를 수학에서 뭐라고 부르는지 떠올려 보세요.',
+  ],
+};
+function hintFor(kind, n) {
+  const h = HINTS[kind] || HINTS.other;
+  return Array.isArray(h) ? h[Math.max(0, n - 1) % h.length] : h;
+}
+
+// ---------- 화면 도우미 ----------
+function toast(msg, type = '') {
+  const box = $('#toasts'); if (!box) return;
+  const el = document.createElement('div');
+  el.className = 'toast ' + type; el.textContent = msg;
+  box.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3800);
+}
+// 줄 넘김 대신 글자를 줄여서 한 줄에 맞춤
+function fitText(el, min = 10) {
+  if (!el) return;
+  el.style.fontSize = '';
+  let fs = parseFloat(getComputedStyle(el).fontSize);
+  while (el.scrollWidth > el.clientWidth + 1 && fs > min) { fs -= 0.5; el.style.fontSize = fs + 'px'; }
+}
+
+// ---------- 효과음 (Web Audio로 직접 만들어 파일이 필요 없음) ----------
+const Sound = (() => {
+  let ctx = null, on = true;
+  try { on = localStorage.getItem('boyle_sound') !== 'off'; } catch (e) {}
+  function ac() {
+    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+  function tone(freq, t0, dur, type = 'triangle', vol = 0.14) {
+    const c = ac(), o = c.createOscillator(), g = c.createGain(), t = c.currentTime + t0;
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(c.destination); o.start(t); o.stop(t + dur + 0.03);
+  }
+  const SFX = {
+    tap: () => tone(880, 0, 0.07, 'triangle', 0.1),                                   // 고르기
+    step: () => { tone(660, 0, 0.08); tone(990, 0.07, 0.11); },                       // 칸 하나 완성
+    page: () => tone(540, 0, 0.07, 'sine', 0.08),                                     // 쪽 넘기기
+    warn: () => { tone(440, 0, 0.12, 'sawtooth', 0.05); tone(440, 0.17, 0.12, 'sawtooth', 0.05); },
+    no: () => { tone(260, 0, 0.16, 'square', 0.05); tone(196, 0.15, 0.24, 'square', 0.05); },
+    ok: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.09, 0.25)),       // 정답
+    done: () => [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, i * 0.11, 0.4)), // 제출 완료
+  };
+  return {
+    play(n) { if (!on) return; try { SFX[n] && SFX[n](); } catch (e) {} },
+    get on() { return on; },
+    toggle() { on = !on; try { localStorage.setItem('boyle_sound', on ? 'on' : 'off'); } catch (e) {} if (on) SFX.tap(); return on; },
+  };
+})();
+
+</script>
+<script>
+// P-V 산점도 (외부 라이브러리 없이 canvas로 그림)
+function createPlot(canvas) {
+  const ctx = canvas.getContext('2d');
+  const st = { series: [], theory: false, stamp: '', xMax: 50, emptyText: '아직 표시할 데이터가 없어요' };
+  const FONT = "'Pretendard','Noto Sans KR',sans-serif";
+  let hits = [], hover = null;
+
+  function draw() {
+    const W = canvas.clientWidth, H = canvas.clientHeight;
+    if (W < 10 || H < 10) return;
+    const dpr = window.devicePixelRatio || 1, cw = Math.round(W * dpr), ch = Math.round(H * dpr);
+    if (canvas.width !== cw || canvas.height !== ch) { canvas.width = cw; canvas.height = ch; }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+
+    const m = { l: 64, r: 22, t: 28, b: 54 }, pw = W - m.l - m.r, ph = H - m.t - m.b;
+    const vis = st.series.filter(s => s.visible !== false);
+    let maxY = 0;
+    vis.forEach(s => s.points.forEach(p => { if (fin(p.y) && p.y > maxY) maxY = p.y; }));
+    const yMax = Math.max(2.5, Math.ceil(maxY * 1.08 / 0.5) * 0.5), xMax = st.xMax;
+    const yStep = yMax > 5 ? 1 : 0.5;
+    const X = v => m.l + v / xMax * pw, Y = p => m.t + ph - p / yMax * ph;
+
+    // 눈금
+    ctx.lineWidth = 1; ctx.font = `14px ${FONT}`; ctx.fillStyle = '#9aa8c4';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    for (let v = 0; v <= xMax; v += 5) {
+      ctx.strokeStyle = v % 10 === 0 ? 'rgba(255,255,255,.08)' : 'rgba(255,255,255,.035)';
+      ctx.beginPath(); ctx.moveTo(X(v) + .5, m.t); ctx.lineTo(X(v) + .5, m.t + ph); ctx.stroke();
+      if (v % 10 === 0) ctx.fillText(String(v), X(v), m.t + ph + 8);
+    }
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    for (let k = 0; k * yStep <= yMax + 1e-9; k++) {
+      const p = k * yStep;
+      ctx.strokeStyle = 'rgba(255,255,255,.07)';
+      ctx.beginPath(); ctx.moveTo(m.l, Y(p) + .5); ctx.lineTo(m.l + pw, Y(p) + .5); ctx.stroke();
+      ctx.fillText(p.toFixed(1), m.l - 10, Y(p));
+    }
+    // 축
+    ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(m.l, m.t); ctx.lineTo(m.l, m.t + ph); ctx.lineTo(m.l + pw, m.t + ph); ctx.stroke();
+    ctx.fillStyle = '#d5ddee'; ctx.font = `600 15px ${FONT}`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+    ctx.fillText('부피 V (mL)', m.l + pw / 2, H - 6);
+    ctx.save(); ctx.translate(14, m.t + ph / 2); ctx.rotate(-Math.PI / 2);
+    ctx.textBaseline = 'top'; ctx.fillText('압력 P (기압)', 0, 0); ctx.restore();
+
+    // 이론 곡선 (교사 화면에서만 켬)
+    if (st.theory) {
+      ctx.save();
+      ctx.beginPath(); ctx.rect(m.l, m.t, pw, ph); ctx.clip();
+      ctx.setLineDash([8, 6]); ctx.strokeStyle = 'rgba(245,185,66,.75)'; ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let v = Math.max(PV_TARGET / yMax, 0.5), f = true; v <= xMax; v += 0.25, f = false) {
+        const x = X(v), y = Y(PV_TARGET / v); f ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke(); ctx.restore();
+      // 범례: 그래프 오른쪽 위 (곡선과 겹치지 않는 자리)
+      const lx = m.l + pw - 12, ly = m.t + 16, label = `이론 곡선 P = ${PV_TARGET} / V`;
+      ctx.font = `600 14px ${FONT}`;
+      const tw = ctx.measureText(label).width;
+      ctx.save(); ctx.setLineDash([8, 6]); ctx.strokeStyle = 'rgba(245,185,66,.85)'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(lx - tw - 44, ly); ctx.lineTo(lx - tw - 10, ly); ctx.stroke(); ctx.restore();
+      ctx.fillStyle = 'rgba(245,185,66,.95)'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+      ctx.fillText(label, lx, ly);
+    }
+
+    // 점 (우리 모둠은 맨 위에 크게)
+    hits = []; let any = false;
+    const order = vis.slice().sort((a, b) => (a.own ? 1 : 0) - (b.own ? 1 : 0));
+    order.forEach(s => s.points.forEach(p => {
+      if (!fin(p.y)) return;
+      any = true;
+      const x = X(p.x), y = Y(p.y);
+      if (p.flag) {
+        ctx.beginPath(); ctx.arc(x, y, 12.5, 0, Math.PI * 2);
+        ctx.strokeStyle = '#ff4d4d'; ctx.lineWidth = 2.5; ctx.stroke();
+      }
+      ctx.beginPath(); ctx.arc(x, y, s.own ? 8.5 : 6.5, 0, Math.PI * 2);
+      ctx.fillStyle = s.color; ctx.fill();
+      ctx.lineWidth = s.own ? 2.5 : 1.2; ctx.strokeStyle = s.own ? '#ffffff' : 'rgba(0,0,0,.55)'; ctx.stroke();
+      hits.push({ x, y, s, p });
+    }));
+    if (!any) {
+      ctx.fillStyle = 'rgba(255,255,255,.4)'; ctx.font = `16px ${FONT}`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(st.emptyText, m.l + pw / 2, m.t + ph / 2);
+    }
+    // 기준 시각 (오른쪽 위 구석에 작게)
+    if (st.stamp) {
+      ctx.fillStyle = 'rgba(255,255,255,.5)'; ctx.font = `13px ${FONT}`;
+      ctx.textAlign = 'right'; ctx.textBaseline = 'top';
+      ctx.fillText(st.stamp, W - m.r, 7);
+    }
+    if (hover) {
+      const h = hits.find(t => t.s.g === hover.s.g && t.p.x === hover.p.x && t.p.y === hover.p.y);
+      if (h) tip(h, W);
+    }
+  }
+
+  function tip(h, W) {
+    const lines = [
+      h.s.label + (h.s.own ? ' (우리 모둠)' : ''),
+      `V ${h.p.x} mL   P ${(+h.p.y).toFixed(2)} 기압`,
+      `P×V = ${(h.p.x * h.p.y).toFixed(1)}`,
+    ];
+    ctx.font = `600 14px ${FONT}`;
+    const w = Math.max(...lines.map(l => ctx.measureText(l).width)) + 22, hh = lines.length * 19 + 14;
+    let x = h.x + 14, y = h.y - hh - 10;
+    if (x + w > W - 4) x = h.x - w - 14;
+    if (y < 4) y = h.y + 14;
+    ctx.beginPath(); ctx.roundRect(x, y, w, hh, 8);
+    ctx.fillStyle = 'rgba(15,23,41,.96)'; ctx.fill();
+    ctx.strokeStyle = h.s.color; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = '#edf1f8'; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    lines.forEach((l, i) => ctx.fillText(l, x + 11, y + 8 + i * 19));
+  }
+
+  canvas.addEventListener('pointermove', e => {
+    const r = canvas.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top;
+    let best = null, bd = 15 * 15;
+    hits.forEach(h => { const d = (h.x - mx) ** 2 + (h.y - my) ** 2; if (d < bd) { bd = d; best = h; } });
+    const same = (a, b) => a && b && a.s.g === b.s.g && a.p.x === b.p.x && a.p.y === b.p.y;
+    if ((best || hover) && !same(best, hover)) { hover = best; draw(); }
+  });
+  canvas.addEventListener('pointerleave', () => { if (hover) { hover = null; draw(); } });
+  new ResizeObserver(() => draw()).observe(canvas);
+
+  return { set(o) { Object.assign(st, o); draw(); }, draw };
+}
+
+</script>
+<script>
+/* ===== 학생 앱 ===== */
+(() => {
+const DEMO = new URLSearchParams(location.search).has('demo');
+const LS = DEMO ? 'boyle_demo_' : 'boyle_v1_';
+const ROLE_LABEL = { chromebook: '크롬북 입력', recorder: '데이터 기록', syringe: '주사기 조작', supplies: '준비물 수령' };
+
+const S = {
+  selC: null, selG: null, cls: null, grp: null, d: null, page: 1,
+  others: {}, stamp: '', lastFetch: 0, vis: {}, focus: null,
+  saveTimer: null, inflight: false, pending: false, poll: null,
+};
+let plot;
+
+// ================= 데이터 =================
+function blank() {
+  return { roles: { chromebook: '', recorder: '', syringe: '', supplies: '' }, three: false,
+    pRaw: ['', '', '', '', ''], ret: [false, false, false, false, false], leakChecked: false, leakRaw: '', effort: '', conclusion: '',
+    correct: false, gradeKind: '', attempts: 0, submitted: false, dirty: false, rev: 0, serverMs: 0 };
+}
+S.d = blank();
+const lsKey = (c, g) => `${LS}${c}_${g}`;
+function writeLocal(c, g, d) { try { localStorage.setItem(lsKey(c, g), JSON.stringify(d)); } catch (e) {} }
+function saveLocal() {
+  if (S.cls && S.grp) writeLocal(S.cls, S.grp, S.d);
+  try { localStorage.setItem(LS + 'cur', JSON.stringify({ c: S.cls, g: S.grp, page: S.page })); } catch (e) {}
+}
+function readLocal(c, g) {
+  try {
+    const t = localStorage.getItem(lsKey(c, g));
+    if (t) { const o = JSON.parse(t), d = Object.assign(blank(), o); d.roles = Object.assign(blank().roles, o.roles || {}); return d; }
+  } catch (e) {}
+  return blank();
+}
+function fromServer(x) {
+  const d = blank();
+  Object.assign(d.roles, x.roles || {});
+  d.three = !!x.three;
+  d.pRaw = [0, 1, 2, 3, 4].map(i => (x.p && x.p[i] != null) ? String(x.p[i]) : '');
+  d.ret = [0, 1, 2, 3, 4].map(i => !!(x.ret && x.ret[i]));
+  d.leakChecked = !!x.leakChecked;
+  d.leakRaw = x.leakP == null ? '' : String(x.leakP);
+  d.effort = x.effort || ''; d.conclusion = x.conclusion || '';
+  d.correct = !!x.correct; d.gradeKind = x.correct ? 'ok' : '';
+  d.attempts = x.attempts || 0; d.submitted = !!x.submitted; d.serverMs = x.updatedMs || 0;
+  return d;
+}
+function hasContent(d) {
+  return Object.values(d.roles).some(s => s.trim()) || d.pRaw.some(s => s.trim()) || d.leakChecked ||
+    d.leakRaw.trim() || d.effort.trim() || d.conclusion.trim();
+}
+const G = () => gInfo(S.grp);
+const pressures = () => S.d.pRaw.map(parseP);
+const roleKeys = () => S.d.three ? ['chromebook', 'recorder', 'syringe'] : ['chromebook', 'recorder', 'syringe', 'supplies'];
+
+function payload() {
+  const d = S.d, r = d.roles, lp = parseP(d.leakRaw);
+  return {
+    roles: { chromebook: r.chromebook.trim(), recorder: r.recorder.trim(), syringe: r.syringe.trim(),
+      supplies: (d.three ? r.recorder : r.supplies).trim() },
+    three: d.three, p: pressures().map(x => fin(x) ? x : null), ret: d.ret.slice(),
+    leakChecked: d.leakChecked, leakP: fin(lp) ? lp : null,
+    effort: d.effort, conclusion: d.conclusion, attempts: d.attempts,
+  };
+}
+
+function reqs() {
+  const d = S.d, r = d.roles;
+  const empty = roleKeys().filter(k => !r[k].trim()).map(k => (k === 'recorder' && d.three) ? '기록·준비물' : ROLE_LABEL[k]);
+  const ps = pressures(), nOk = ps.filter(fin).length, nBad = ps.filter(x => Number.isNaN(x)).length;
+  const lp = parseP(d.leakRaw), el = d.effort.trim().length;
+  return [
+    { label: '역할 이름', page: 1, ok: !!S.grp && empty.length === 0, det: !S.grp ? '반·모둠 선택' : empty.join(', ') + ' 비어 있음' },
+    { label: '압력 5개', page: 2, ok: nOk === 5, det: nBad ? `${nBad}개 숫자 확인` : `${nOk}/5 입력` },
+    { label: '30 mL 복귀 확인', page: 2, ok: d.ret.every(Boolean), det: `${d.ret.filter(Boolean).length}/5 체크` },
+    { label: '실험 전 누설 확인', page: 2, ok: d.leakChecked && fin(lp), det: !fin(lp) ? '압력 입력 필요' : '체크 필요' },
+    { label: '오차 줄이기 노력', page: 3, ok: el >= MIN_EFFORT_LEN, det: `${el}/${MIN_EFFORT_LEN}자 이상` },
+    { label: '결론 정답', page: 4, ok: d.correct, det: '채점 통과 필요' },
+  ];
+}
+
+// 압력은 소수 둘째 자리까지 (예: 1.50)
+const dec2 = raw => /^\d+\.\d{2}$/.test(String(raw).trim().replace(',', '.'));
+function fmtWarn(raw) {
+  const v = parseP(raw); Sound.play('warn');
+  toast(`소수 둘째 자리까지 써 주세요. 예: ${raw.trim()} → ${v.toFixed(2)}`, 'warn');
+}
+
+// 지금 이 쪽에서 다음에 입력할 곳
+function targetFor(page) {
+  const d = S.d;
+  if (page === 1) {
+    if (!S.selC) return { el: '#classChips' };
+    if (!S.grp) return { el: '#groupChips' };
+    for (const k of roleKeys()) if (!d.roles[k].trim()) return { el: `[data-role="${k}"]` };
+    return null;
+  }
+  if (!S.grp) return null;
+  if (page === 2) {
+    if (!fin(parseP(d.leakRaw))) return { el: '#leakP' };
+    if (!d.leakChecked) return { el: '#leakChkWrap' };
+    const ps = pressures();
+    for (let i = 0; i < 5; i++) {
+      if (!fin(ps[i])) return { el: `.pIn[data-i="${i}"]`, row: i };
+      if (!d.ret[i]) return { el: `.retWrap[data-i="${i}"]`, focusEl: `.retChk[data-i="${i}"]`, row: i, ret: true };
+    }
+    return null;
+  }
+  if (page === 3) return d.effort.trim().length < MIN_EFFORT_LEN ? { el: '#effort' } : null;
+  if (page === 4) {
+    if (d.submitted) return null;
+    if (!d.conclusion.trim()) return { el: '#conclusion' };
+    if (!d.correct) return { el: '#gradeBtn' };
+    return reqs().every(x => x.ok) ? { el: '#submitBtn' } : { el: '#checklist' };
+  }
+  return null;
+}
+function updateNext() {
+  $$('.next').forEach(e => e.classList.remove('next'));
+  $$('tr.next-row').forEach(e => e.classList.remove('next-row'));
+  if (S.d.submitted) return;
+  const t = targetFor(S.page);
+  if (t) {
+    const el = $(t.el); if (el) el.classList.add('next');
+    if (t.row != null) { const inp = $(`.pIn[data-i="${t.row}"]`); inp && inp.closest('tr').classList.add('next-row'); }
+  } else if (S.page < 4 && S.grp) $('#nextBtn').classList.add('next');
+}
+
+// ================= 저장 (모두 백그라운드) =================
+function setPill(t, k) { const p = $('#savePill'); p.textContent = t; p.className = 'pill ' + (k || ''); }
+
+function markDirty() {
+  if (!S.cls || !S.grp || S.d.submitted) return;
+  S.d.dirty = true; S.d.rev++;
+  saveLocal(); updateDerived(); updatePlot();
+  clearTimeout(S.saveTimer);
+  S.saveTimer = setTimeout(flush, 1500);
+}
+
+async function flush() {
+  clearTimeout(S.saveTimer); S.saveTimer = null;
+  if (!S.cls || !S.grp || !S.d.dirty || S.d.submitted) return;
+  if (DEMO) { setPill('미리보기 · 저장 안 됨', 'warn'); return; }
+  if (!apiReady()) { setPill('서버 주소 미설정', 'warn'); return; }
+  if (S.inflight) { S.pending = true; return; }
+  const c = S.cls, g = S.grp, d = S.d, rev = d.rev, body = { cls: c, grp: g, data: payload() };
+  S.inflight = true; setPill('저장 중…', 'busy');
+  try {
+    const r = await api('save', body);
+    if (!r.ok) throw new Error(r.error || 'save');
+    if (r.locked && !d.submitted) {
+      const nd = fromServer(r.data); writeLocal(c, g, nd);
+      if (S.d === d) { S.d = nd; renderAll(); toast('이미 제출된 보고서예요. 고치려면 선생님께 잠금 해제를 부탁하세요.', 'warn'); }
+    } else {
+      d.serverMs = r.data.updatedMs;
+      if (d.rev === rev) d.dirty = false;
+      writeLocal(c, g, d);
+      setPill('저장됨 ' + hhmm(), 'ok');
+    }
+  } catch (e) {
+    setPill('저장 실패 · 자동으로 다시 시도', 'bad');
+    clearTimeout(S.saveTimer); S.saveTimer = setTimeout(flush, 8000);
+  } finally {
+    S.inflight = false;
+    if (S.pending) { S.pending = false; flush(); }
+  }
+}
+
+async function syncFromServer() {
+  if (DEMO || !apiReady() || !S.grp) return;
+  const c = S.cls, g = S.grp;
+  try {
+    const r = await api('load', { cls: c, grp: g });
+    if (!r.ok || S.cls !== c || S.grp !== g) return;
+    const sd = r.data, d = S.d;
+    if (!sd) {
+      if (d.serverMs > 0 && !d.dirty) { S.d = blank(); saveLocal(); renderAll(); return; }
+      if (hasContent(d)) { d.dirty = true; flush(); }
+      return;
+    }
+    if (sd.submitted) {
+      if (!d.submitted || sd.updatedMs !== d.serverMs) { S.d = fromServer(sd); saveLocal(); renderAll(); }
+      return;
+    }
+    if (d.submitted) {
+      S.d = fromServer(sd); saveLocal(); renderAll();
+      Sound.play('ok'); toast('선생님이 잠금을 풀었어요. 다시 고칠 수 있어요.', 'ok'); return;
+    }
+    if (d.dirty) { flush(); return; }
+    if (sd.updatedMs > d.serverMs) { S.d = fromServer(sd); saveLocal(); renderAll(); }
+  } catch (e) {}
+}
+
+async function fetchClass() {
+  if (!S.grp) return;
+  if (DEMO || !apiReady()) { S.stamp = DEMO ? '미리보기' : ''; updatePlot(); return; }
+  const c = S.cls, btn = $('#refreshBtn');
+  btn.classList.add('spin');
+  try {
+    const r = await api('classData', { cls: c });
+    if (!r.ok || S.cls !== c) return;
+    S.others = {};
+    (r.groups || []).forEach(x => { S.others[x.grp] = x; });
+    S.lastFetch = Date.now(); S.stamp = hhmm() + ' 기준';
+    updatePlot();
+  } catch (e) {
+    toast('다른 모둠 데이터를 아직 못 불러왔어요. 잠시 뒤 새로고침을 눌러 보세요.', 'warn');
+  } finally { btn.classList.remove('spin'); }
+}
+function startPoll() { if (!S.poll) S.poll = setInterval(syncFromServer, 40000); }
+function stopPoll() { clearInterval(S.poll); S.poll = null; }
+
+// ================= 주사기 + 압력계 그림 =================
+const rnd = n => { const x = Math.sin(n * 12.9898) * 43758.5453; return x - Math.floor(x); };
+const DOTS = Array.from({ length: 30 }, (_, i) => ({ fx: (i + rnd(i + 1)) / 30, fy: rnd(i + 101) }));
+const RIG = { V: 30, P: 0, tV: 30, tP: 0, raf: 0 };
+function rigTarget() {
+  const g = S.grp ? G() : null, ps = pressures(), lp = parseP(S.d.leakRaw);
+  const preOk = S.d.leakChecked && fin(lp);
+  if (!g || !preOk || S.focus === 'leak') return { V: 30, P: fin(lp) ? lp : null, label: '실험 전 확인', pre: true };
+  let i = 4, back = false;
+  if (S.focus && S.focus.startsWith('p')) i = +S.focus.slice(1);
+  else if (S.focus && S.focus.startsWith('r')) { i = +S.focus.slice(1); back = true; }
+  else { const t = targetFor(2); if (t && t.row != null) { i = t.row; back = !!t.ret; } }
+  if (back) return { V: 30, P: 1, label: `${i + 1}번째 측정 후`, back: true };
+  return { V: g.v[i], P: fin(ps[i]) ? ps[i] : null, label: `${i + 1}번째 부피` };
+}
+function rigSVG(V, P) {
+  const x0 = 368, k = 5.3, top = 56, bot = 118, xp = x0 - V * k, my = (top + bot) / 2;
+  const bl = x0 - 50 * k - 12;                       // 실린더 왼쪽 끝
+  let s = `<defs>
+    <linearGradient id="airG" x1="0" x2="1"><stop offset="0" stop-color="rgba(124,196,255,.14)"/><stop offset="1" stop-color="rgba(124,196,255,.34)"/></linearGradient>
+    <linearGradient id="rodG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8592b4"/><stop offset=".5" stop-color="#5d6987"/><stop offset="1" stop-color="#47516c"/></linearGradient>
+    <linearGradient id="thumbG" x1="0" x2="1"><stop offset="0" stop-color="#9aa6c6"/><stop offset="1" stop-color="#6c789a"/></linearGradient>
+  </defs>`;
+  // 눈금
+  for (let v = 0; v <= 50; v += 5) {
+    const x = x0 - v * k, big = v % 10 === 0;
+    s += `<line x1="${x}" y1="${bot}" x2="${x}" y2="${bot + (big ? 14 : 8)}" stroke="#7d8fbd" stroke-width="${big ? 2 : 1.2}"/>`;
+    if (big) s += `<text x="${x}" y="${bot + 32}" text-anchor="middle" font-size="15" font-weight="700" fill="#a7b4d0">${v}</text>`;
+  }
+  // 실린더 날개(손가락 거는 부분) — 실린더보다 위아래로 넓게
+  s += `<rect x="${bl - 9}" y="${top - 20}" width="11" height="${bot - top + 40}" rx="4" fill="#33456f" stroke="#6f86bd" stroke-width="2"/>`;
+  // 실린더와 공기
+  s += `<rect x="${bl}" y="${top}" width="${50 * k + 12}" height="${bot - top}" rx="9" fill="rgba(255,255,255,.04)" stroke="#5f77ad" stroke-width="2.5"/>`;
+  s += `<rect x="${xp}" y="${top + 3}" width="${Math.max(0, x0 - xp)}" height="${bot - top - 6}" fill="url(#airG)"/>`;
+  DOTS.forEach(d => {
+    const cx = xp + 7 + d.fx * Math.max(0, x0 - xp - 14), cy = top + 9 + d.fy * (bot - top - 18);
+    s += `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="3.4" fill="#9fd4ff"/>`;
+  });
+  // 피스톤 막대(십자 단면 느낌) + 고무 마개
+  const rodL = xp - 13 - 80;
+  s += `<rect x="${rodL}" y="${my - 11}" width="80" height="22" rx="2" fill="url(#rodG)"/>`;
+  s += `<line x1="${rodL}" y1="${my}" x2="${xp - 13}" y2="${my}" stroke="#2c3550" stroke-width="2"/>`;
+  s += `<rect x="${xp - 13}" y="${top + 3}" width="13" height="${bot - top - 6}" rx="3" fill="#2d3346" stroke="#8a95b5" stroke-width="1.5"/>`;
+  s += `<line x1="${xp - 9}" y1="${top + 5}" x2="${xp - 9}" y2="${bot - 5}" stroke="#4a5470" stroke-width="2"/>`;
+  // 엄지 받침(피스톤 손잡이) — 실린더보다 넓은 원판
+  s += `<rect x="${rodL - 14}" y="${top - 22}" width="14" height="${bot - top + 44}" rx="6" fill="url(#thumbG)" stroke="#c3cbe0" stroke-width="1.5"/>`;
+  // 현재 부피 표시
+  s += `<line x1="${xp}" y1="${top - 8}" x2="${xp}" y2="${bot + 4}" stroke="#f7bd47" stroke-width="2" stroke-dasharray="4 4"/>`;
+  s += `<text x="${xp}" y="${top - 14}" text-anchor="middle" font-size="17" font-weight="900" fill="#f7bd47">${Math.round(V)} mL</text>`;
+  // 노즐·콕·관
+  s += `<rect x="${x0}" y="${my - 8}" width="22" height="16" rx="3" fill="#4b5a80"/>`;
+  s += `<circle cx="${x0 + 34}" cy="${my}" r="9" fill="#f7bd47"/><rect x="${x0 + 30}" y="${my - 22}" width="8" height="16" rx="2" fill="#f7bd47"/>`;
+  s += `<path d="M ${x0 + 43} ${my} H 432" stroke="#4b5a80" stroke-width="9" fill="none" stroke-linecap="round"/>`;
+  // 압력계 0~3기압
+  const cx = 486, cy = my, R = 56, A = p => (135 + Math.min(Math.max(p, 0), 3) / 3 * 270) * Math.PI / 180;
+  const pt = (p, r) => [cx + r * Math.cos(A(p)), cy + r * Math.sin(A(p))];
+  s += `<circle cx="${cx}" cy="${cy}" r="${R + 6}" fill="#0b1426" stroke="#6c789a" stroke-width="3"/>`;
+  const [ax, ay] = pt(0, R - 6), [bx, by] = pt(3, R - 6);
+  s += `<path d="M ${ax} ${ay} A ${R - 6} ${R - 6} 0 1 1 ${bx} ${by}" stroke="rgba(124,196,255,.35)" stroke-width="5" fill="none"/>`;
+  for (let p = 0; p <= 3.001; p += 0.5) {
+    const [x1, y1] = pt(p, R - 14), [x2, y2] = pt(p, R - 2), one = Math.abs(p - 1) < 1e-6;
+    s += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${one ? '#f7bd47' : '#a7b4d0'}" stroke-width="${one ? 3.5 : 2}"/>`;
+    if (p % 1 === 0) { const [tx, ty] = pt(p, R - 26); s += `<text x="${tx}" y="${ty + 5}" text-anchor="middle" font-size="14" font-weight="800" fill="${one ? '#f7bd47' : '#a7b4d0'}">${p}</text>`; }
+  }
+  const [nx, ny] = pt(P, R - 10);
+  s += `<line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="#ff7777" stroke-width="3.5" stroke-linecap="round"/><circle cx="${cx}" cy="${cy}" r="6" fill="#ff7777"/>`;
+  s += `<text x="${cx}" y="${cy + R + 30}" text-anchor="middle" font-size="17" font-weight="900" fill="${P > 0 ? '#f1f5fc' : '#6f7fa6'}">${P > 0 ? P.toFixed(2) + ' 기압' : '압력 ?'}</text>`;
+  return s;
+}
+function renderRig() {
+  if (!S.grp) return;
+  const t = rigTarget();
+  $('#rigLabel').textContent = t.label; $('#rigV').textContent = t.V;
+  $('.rig-head .act').textContent = t.pre ? 'mL에서 1기압 확인' : t.back ? 'mL로 되돌려 1기압 확인' : 'mL에 맞추고 압력 읽기';
+  RIG.tV = t.V; RIG.tP = t.P || 0;
+  if (RIG.raf) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const stepFn = () => {
+    RIG.V += (RIG.tV - RIG.V) * (reduce ? 1 : 0.18);
+    RIG.P += (RIG.tP - RIG.P) * (reduce ? 1 : 0.18);
+    if (Math.abs(RIG.tV - RIG.V) < 0.05) RIG.V = RIG.tV;
+    if (Math.abs(RIG.tP - RIG.P) < 0.003) RIG.P = RIG.tP;
+    $('#rig').innerHTML = rigSVG(RIG.V, RIG.P);
+    RIG.raf = (RIG.V !== RIG.tV || RIG.P !== RIG.tP) ? requestAnimationFrame(stepFn) : 0;
+  };
+  RIG.raf = requestAnimationFrame(stepFn);
+}
+
+// ================= 화면 =================
+function buildChips() {
+  $('#classChips').innerHTML = Array.from({ length: CLASS_COUNT }, (_, i) => `<button class="chip" data-c="${i + 1}">${i + 1}반</button>`).join('');
+  $('#groupChips').innerHTML = GROUPS.map(g => `<button class="chip g" data-g="${g.n}" style="--gc:${g.color}"><span class="sw"></span>${g.n}모둠<small>${g.name}</small></button>`).join('');
+}
+function paintChips() {
+  $$('#classChips .chip').forEach(b => b.classList.toggle('on', +b.dataset.c === S.selC));
+  $$('#groupChips .chip').forEach(b => b.classList.toggle('on', +b.dataset.g === S.selG));
+}
+function tryEnter() {
+  if (S.selC && S.selG && (S.selC !== S.cls || S.selG !== S.grp)) {
+    enter(S.selC, S.selG);
+    const t = targetFor(1); if (t && t.el.startsWith('[data-role')) $(t.el).focus();
+  } else updateNext();
+}
+
+function enter(c, g) {
+  if (S.d.dirty) flush();
+  S.cls = c; S.grp = g; S.selC = c; S.selG = g;
+  S.d = readLocal(c, g); S.others = {}; S.stamp = ''; S.lastFetch = 0; S.focus = null;
+  buildTable(); renderAll(); saveLocal();
+  syncFromServer(); fetchClass();
+}
+
+function buildTable() {
+  const g = G();
+  $('#grpTag').innerHTML = `<span class="dot" style="--gc:${g.color}"></span>${g.n}모둠 측정 결과`;
+  $('#dataBody').innerHTML = g.v.map((v, i) =>
+    `<tr><td class="idx">${i + 1}</td><td class="vol">${v}<small>mL</small></td>
+     <td><input class="num pIn lockable" data-i="${i}" inputmode="decimal" autocomplete="off" placeholder="0.00"></td>
+     <td class="pv empty" id="pv${i}">–</td>
+     <td><label class="retWrap" data-i="${i}"><input type="checkbox" class="retChk lockable" data-i="${i}">1기압</label></td></tr>`).join('');
+}
+
+function applyThree() {
+  const t = S.d.three;
+  $('#roleSupplies').hidden = t;
+  $('#recorderLabel').textContent = t ? '데이터 기록 + 준비물 수령' : '데이터 기록';
+}
+function applyLock() {
+  const L = !!S.d.submitted, off = L || !S.grp;
+  $$('.lockable').forEach(el => el.disabled = off);
+  $('#gradeBtn').disabled = off;
+  $('#lockBanner').hidden = !L;
+  L ? startPoll() : stopPoll();
+}
+
+function renderAll() {
+  const d = S.d;
+  paintChips();
+  if (S.grp) {
+    const g = G();
+    $('#who').innerHTML = `<span class="dot" style="--gc:${g.color}"></span>${S.cls}반 ${S.grp}모둠 <span class="muted">${g.name}</span>`;
+  }
+  $$('[data-role]').forEach(inp => inp.value = d.roles[inp.dataset.role] || '');
+  $('#three').checked = d.three; applyThree();
+  $$('.pIn').forEach(inp => inp.value = d.pRaw[+inp.dataset.i]);
+  $('#leakChk').checked = d.leakChecked; $('#leakP').value = d.leakRaw;
+  $('#effort').value = d.effort; $('#conclusion').value = d.conclusion;
+  showGrade(); applyLock(); updateDerived(); updatePlot();
+}
+
+function updateDerived() {
+  const d = S.d, ps = pressures();
+  if (S.grp) {
+    const g = G();
+    ps.forEach((p, i) => {
+      const c = $('#pv' + i); if (!c) return;
+      c.textContent = fin(p) ? (p * g.v[i]).toFixed(1) : '–'; c.classList.toggle('empty', !fin(p));
+      c.closest('tr').classList.toggle('filled', fin(p));
+      if (fin(p)) c.closest('tr').querySelector('.idx').textContent = '✓'; else c.closest('tr').querySelector('.idx').textContent = i + 1;
+    });
+  }
+  $$('.pIn').forEach(inp => { const v = parseP(inp.value); inp.classList.toggle('bad', Number.isNaN(v)); inp.classList.toggle('filled', fin(v)); inp.classList.toggle('fmt', fin(v) && !dec2(inp.value)); });
+  $$('[data-role]').forEach(inp => inp.classList.toggle('filled', !!inp.value.trim()));
+  const lp = parseP(d.leakRaw), lm = $('#leakMsg');
+  const preOk = d.leakChecked && fin(lp), off = d.submitted || !S.grp;
+  const psNow = pressures();
+  $$('.pIn').forEach(inp => { const i = +inp.dataset.i; const prevOk = i === 0 || (fin(psNow[i - 1]) && d.ret[i - 1]); inp.disabled = off || !preOk || !prevOk; });
+  $$('.retChk').forEach(cb => { const i = +cb.dataset.i; cb.checked = !!d.ret[i]; cb.disabled = off || !preOk || !fin(psNow[i]); cb.closest('.retWrap').classList.toggle('filled', !!d.ret[i]); });
+  $('#leakChk').disabled = off || (!fin(lp) && !d.leakChecked);
+  $('#tableCard').classList.toggle('waiting', !!S.grp && !preOk);
+  $('#leakP').classList.toggle('bad', Number.isNaN(lp));
+  $('#leakP').classList.toggle('filled', fin(lp) && !leakBad(lp));
+  $('#leakP').classList.toggle('fmt', fin(lp) && !dec2(d.leakRaw));
+  $('#leakChkWrap').classList.toggle('filled', d.leakChecked);
+  if (Number.isNaN(lp)) { lm.className = 'msg bad'; lm.textContent = '숫자로 입력하세요. 예: 1.00'; }
+  else if (leakBad(lp)) { lm.className = 'msg warn'; lm.textContent = '⚠ 1기압이 아니에요. 공기가 새는 것 같아요. 콕을 다시 잠그고 확인하세요.'; }
+  else if (fin(lp) && d.leakChecked) { lm.className = 'msg ok'; lm.textContent = '✓ 공기가 새지 않아요. 이제 오른쪽 표에 측정값을 기록하세요.'; }
+  else { lm.className = 'msg'; lm.textContent = ''; }
+
+  const el = d.effort.trim().length, ec = $('#effortCount');
+  ec.textContent = el < MIN_EFFORT_LEN ? `${el}자 (최소 ${MIN_EFFORT_LEN}자)` : `✓ ${el}자`;
+  ec.classList.toggle('ok', el >= MIN_EFFORT_LEN);
+  $('#effort').classList.toggle('filled', el >= MIN_EFFORT_LEN);
+
+  const R = reqs();
+  $('#checklist').innerHTML = R.map(x => `<li class="${x.ok ? 'ok' : 'no'}"><span class="mk">${x.ok ? '✓' : '!'}</span>${x.label}${
+    x.ok ? '' : `<span class="det">${esc(x.det)}</span><button class="go" data-go="${x.page}">${x.page}쪽</button>`}</li>`).join('');
+  const done = {}; [1, 2, 3, 4].forEach(pg => done[pg] = R.filter(x => x.page === pg).every(x => x.ok));
+  $$('.step').forEach(b => b.classList.toggle('done', !!done[b.dataset.page]));
+  const all = R.every(x => x.ok), sb = $('#submitBtn');
+  if (!sb.dataset.busy) {
+    sb.disabled = !all || d.submitted || !S.grp;
+    sb.textContent = d.submitted ? '제출 완료 🔒' : '최종 제출';
+  }
+  const left = R.filter(x => !x.ok).length;
+  $('#submitHint').textContent = d.submitted ? '' : all ? '모든 항목을 갖췄어요. 제출할 수 있어요!' : `아직 ${left}개 항목이 남았어요.`;
+  updateNext(); renderRig();
+}
+
+function showGrade() {
+  const d = S.d, m = $('#gradeMsg');
+  if (d.correct) { m.className = 'grade ok'; m.textContent = '🎉 정답이에요! 결론이 실험 결과와 잘 맞아요.'; }
+  else if (d.gradeKind === 'edited') { m.className = 'grade warn'; m.textContent = '결론이 바뀌었어요. 다시 채점해 주세요.'; }
+  else if (d.gradeKind) { m.className = 'grade bad'; m.innerHTML = '<b>아직이에요.</b> 힌트: ' + esc(hintFor(d.gradeKind, d.attempts)); }
+  else { m.className = 'grade'; m.textContent = '결론을 쓰고 채점하기를 누르세요. 몇 번이든 다시 고칠 수 있어요.'; }
+  $('#attemptInfo').textContent = d.attempts ? `채점 ${d.attempts}회` : '';
+}
+
+function updatePlot() {
+  if (!plot) return;
+  const series = GROUPS.map(g => {
+    const own = g.n === S.grp;
+    const ps = own ? pressures() : ((S.others[g.n] && S.others[g.n].p) || []);
+    return { g: g.n, label: `${g.n}모둠`, color: g.color, own, visible: S.vis[g.n] !== false,
+      points: g.v.map((v, i) => ({ x: v, y: fin(ps[i]) ? ps[i] : null })) };
+  });
+  plot.set({ series, theory: false, stamp: S.stamp });
+  $('#legend').innerHTML = series.map(s => {
+    const n = s.points.filter(p => fin(p.y)).length;
+    return `<button class="lg ${s.visible ? '' : 'off'} ${s.own ? 'own' : ''}" data-g="${s.g}"><span class="dot" style="--gc:${s.color}"></span>${s.label}${s.own ? ' (우리)' : ''} <span class="cnt">${n}/5</span></button>`;
+  }).join('');
+}
+
+function go(n, quiet) {
+  n = Math.max(1, Math.min(4, n));
+  if (n > 1 && !S.grp) { Sound.play('warn'); toast('먼저 반과 모둠을 고르세요.', 'warn'); n = 1; }
+  if (!quiet && n !== S.page) Sound.play('page');
+  S.page = n;
+  $$('.page').forEach(p => p.classList.toggle('on', +p.dataset.page === n));
+  $$('.step').forEach(b => b.classList.toggle('on', +b.dataset.page === n));
+  $('#prevBtn').disabled = n === 1;
+  $('#nextBtn').hidden = n === 4;
+  saveLocal(); window.scrollTo(0, 0); updateNext();
+  if (n === 2) renderRig();
+  if (n === 4) { requestAnimationFrame(() => plot.draw()); if (Date.now() - S.lastFetch > 15000) fetchClass(); }
+}
+
+// ================= 이벤트 =================
+$('#classChips').onclick = e => { const b = e.target.closest('[data-c]'); if (!b) return; S.selC = +b.dataset.c; Sound.play('tap'); paintChips(); tryEnter(); };
+$('#groupChips').onclick = e => { const b = e.target.closest('[data-g]'); if (!b) return; S.selG = +b.dataset.g; Sound.play('tap'); paintChips(); tryEnter(); };
+$$('[data-role]').forEach(inp => {
+  inp.addEventListener('input', () => { S.d.roles[inp.dataset.role] = inp.value; markDirty(); });
+  inp.addEventListener('change', () => { if (inp.value.trim()) Sound.play('step'); });
+  inp.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return; e.preventDefault();
+    const t = targetFor(1); if (t && t.el.startsWith('[data-role')) $(t.el).focus(); else $('#nextBtn').focus();
+  });
+});
+$('#three').addEventListener('change', e => { S.d.three = e.target.checked; Sound.play('tap'); applyThree(); markDirty(); });
+
+$('#dataBody').addEventListener('input', e => {
+  const t = e.target; if (!t.classList.contains('pIn')) return;
+  S.d.pRaw[+t.dataset.i] = t.value; markDirty();
+});
+$('#dataBody').addEventListener('change', e => {
+  const t = e.target; if (!t.classList.contains('pIn')) return;
+  const v = parseP(t.value);
+  if (fin(v) && !dec2(t.value)) fmtWarn(t.value); else if (fin(v)) Sound.play('step'); else if (Number.isNaN(v)) Sound.play('no');
+});
+$('#dataBody').addEventListener('focusin', e => {
+  if (e.target.classList.contains('pIn')) { S.focus = 'p' + e.target.dataset.i; renderRig(); }
+  if (e.target.classList.contains('retChk')) { S.focus = 'r' + e.target.dataset.i; renderRig(); }
+});
+$('#dataBody').addEventListener('change', e => {
+  const t = e.target; if (!t.classList.contains('retChk')) return;
+  const i = +t.dataset.i; S.d.ret[i] = t.checked; markDirty();
+  if (t.checked) {
+    Sound.play('step');
+    const nx = $(`.pIn[data-i="${i + 1}"]`);
+    if (nx) setTimeout(() => nx.focus(), 60); else { S.focus = null; renderRig(); toast('5개 측정과 복귀 확인을 모두 마쳤어요!', 'ok'); }
+  }
+});
+$('#dataBody').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' || !e.target.classList.contains('pIn')) return;
+  e.preventDefault();
+  const t = targetFor(2), next = t ? $(t.focusEl || t.el) : $('#nextBtn');
+  if (next && next !== e.target) next.focus();
+});
+$('#leakP').addEventListener('focus', () => { S.focus = 'leak'; renderRig(); });
+$('#leakP').addEventListener('input', e => { S.d.leakRaw = e.target.value; markDirty(); });
+$('#leakP').addEventListener('change', e => {
+  const v = parseP(e.target.value);
+  if (leakBad(v)) { Sound.play('warn'); toast('1기압이 아니에요. 콕을 다시 잠그고 눌렀다 당겨 다시 확인하세요.', 'warn'); }
+  else if (fin(v) && !dec2(e.target.value)) fmtWarn(e.target.value); else if (fin(v)) Sound.play('step'); else if (Number.isNaN(v)) Sound.play('no');
+});
+$('#leakP').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('#leakChk').focus(); } });
+$('#leakChk').addEventListener('change', e => {
+  S.d.leakChecked = e.target.checked; markDirty();
+  if (e.target.checked) {
+    Sound.play('step');
+    const t = targetFor(2);
+    if (t && t.row != null) setTimeout(() => $(t.focusEl || t.el).focus(), 60);
+  }
+});
+
+let effortWasOk = false;
+$('#effort').addEventListener('input', e => {
+  S.d.effort = e.target.value;
+  const ok = S.d.effort.trim().length >= MIN_EFFORT_LEN;
+  if (ok && !effortWasOk) Sound.play('step');
+  effortWasOk = ok; markDirty();
+});
+$('#conclusion').addEventListener('input', e => {
+  S.d.conclusion = e.target.value;
+  if (S.d.correct) { S.d.correct = false; S.d.gradeKind = 'edited'; showGrade(); }
+  markDirty();
+});
+$('#gradeBtn').onclick = () => {
+  if (!S.grp || S.d.submitted) return;
+  const r = gradeConclusion(S.d.conclusion);
+  if (r.kind === 'empty') { Sound.play('warn'); toast('결론을 먼저 써 보세요.', 'warn'); $('#conclusion').focus(); return; }
+  S.d.attempts++; S.d.correct = r.correct; S.d.gradeKind = r.kind;
+  Sound.play(r.correct ? 'ok' : 'no');
+  showGrade(); markDirty();
+};
+$('#submitBtn').onclick = async () => {
+  if (S.d.submitted || reqs().some(x => !x.ok)) return;
+  if (!confirm('최종 제출할까요?\n제출하면 잠겨서 더 고칠 수 없어요.')) return;
+  if (DEMO) { S.d.submitted = true; S.d.dirty = false; saveLocal(); renderAll(); Sound.play('done'); toast('미리보기: 제출된 모습이에요. 저장은 되지 않아요.', 'ok'); return; }
+  clearTimeout(S.saveTimer);
+  const c = S.cls, g = S.grp, sb = $('#submitBtn');
+  sb.dataset.busy = '1'; sb.disabled = true; sb.textContent = '제출 중…';
+  try {
+    const r = await api('save', { cls: c, grp: g, data: payload(), submit: true });
+    if (r.ok && r.locked) {
+      const nd = fromServer(r.data); writeLocal(c, g, nd);
+      if (S.cls === c && S.grp === g) S.d = nd;
+      Sound.play('done'); toast('최종 제출을 마쳤어요! 수고했어요.', 'ok');
+    } else if (r.error === 'incomplete') {
+      Sound.play('no'); toast('빠진 항목이 있어요: ' + (r.missing || []).join(', '), 'bad');
+    } else throw new Error(r.error);
+  } catch (e) {
+    Sound.play('no'); toast('제출하지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.', 'bad');
+  } finally {
+    delete sb.dataset.busy; renderAll();
+  }
+};
+$('#checklist').onclick = e => { const b = e.target.closest('[data-go]'); if (b) go(+b.dataset.go); };
+$('#legend').onclick = e => { const b = e.target.closest('[data-g]'); if (!b) return; const g = +b.dataset.g; S.vis[g] = S.vis[g] === false; Sound.play('tap'); updatePlot(); };
+$('#refreshBtn').onclick = () => { Sound.play('tap'); fetchClass(); syncFromServer(); };
+$$('.step').forEach(b => b.onclick = () => go(+b.dataset.page));
+$('#prevBtn').onclick = () => go(S.page - 1);
+$('#nextBtn').onclick = () => go(S.page + 1);
+$('#soundBtn').onclick = () => { $('#soundBtn').textContent = Sound.toggle() ? '🔊' : '🔇'; };
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') flush();
+  else if (S.grp) syncFromServer();
+});
+window.addEventListener('pagehide', () => {
+  if (DEMO || !apiReady() || !S.grp || !S.d.dirty || S.d.submitted) return;
+  try {
+    navigator.sendBeacon(API_URL, new Blob([JSON.stringify({ action: 'save', cls: S.cls, grp: S.grp, data: payload() })], { type: 'text/plain;charset=utf-8' }));
+  } catch (e) {}
+});
+window.addEventListener('resize', () => fitText($('#brand'), 12));
+
+// ================= 시작 =================
+document.title = APP_TITLE;
+$('#appTitle').textContent = APP_TITLE;
+$('#soundBtn').textContent = Sound.on ? '🔊' : '🔇';
+buildChips();
+plot = createPlot($('#plot'));
+if (DEMO) $('#demoBanner').hidden = false;
+else if (!apiReady()) setPill('서버 주소 미설정', 'warn');
+let cur = null;
+try { cur = JSON.parse(localStorage.getItem(LS + 'cur') || 'null'); } catch (e) {}
+if (cur && cur.c && cur.g) { enter(cur.c, cur.g); go(cur.page || 1, true); }
+else { renderAll(); go(1, true); }
+effortWasOk = S.d.effort.trim().length >= MIN_EFFORT_LEN;
+fitText($('#brand'), 12);
+})();
+</script>
+<script>
+/* ===== 교사 대시보드 ===== */
+(() => {
+const T = {
+  token: sessionStorage.getItem('boyleT_token') || '', name: sessionStorage.getItem('boyleT_name') || '',
+  all: [], cls: +sessionStorage.getItem('boyleT_cls') || 1,
+  sandbox: false, sb: [], vis: {}, stamp: '', busy: false, auto: null, editG: null,
+};
+let plot;
+const ROLE_KEYS = ['chromebook', 'recorder', 'syringe', 'supplies'];
+const clsLabel = () => T.sandbox ? '샌드박스' : `${T.cls}반`;
+
+function rows() { return T.sandbox ? T.sb : T.all.filter(r => r.cls === T.cls); }
+function rowOf(g) { return rows().find(r => r.grp === g) || null; }
+function blankRow(g) {
+  return { cls: T.sandbox ? 0 : T.cls, grp: g, roles: { chromebook: '', recorder: '', syringe: '', supplies: '' }, three: false,
+    p: [null, null, null, null, null], ret: [false, false, false, false, false], leakChecked: false, leakP: null, effort: '', conclusion: '', correct: false,
+    attempts: 0, submitted: false, updatedAt: '', submittedAt: '', updatedMs: 0 };
+}
+function rolesOk(r) { const o = r.roles; return !!(o.chromebook && o.recorder && o.syringe && (r.three || o.supplies)); }
+function reqList(r) {
+  const n = r.p.filter(fin).length;
+  const rn = (r.ret || []).filter(Boolean).length;
+  return [['역할', rolesOk(r)], ['실험 전 누설', r.leakChecked && fin(r.leakP)], [`압력 ${n}/5`, n === 5], [`복귀 ${rn}/5`, rn === 5],
+    ['노력', (r.effort || '').trim().length >= MIN_EFFORT_LEN], [`결론 ${r.attempts}회`, r.correct]];
+}
+function pvBadIdx(r) { const g = gInfo(r.grp); return r.p.map((p, i) => fin(p) && pvBad(pvOf(p, g.v[i])) ? i : -1).filter(i => i >= 0); }
+
+// ---------- 로그인 ----------
+function showDash() {
+  $('#loginView').hidden = true; $('#dashView').hidden = false;
+  $('#logoutBtn').hidden = !T.token;
+  render();
+}
+function showLogin(msg = '') {
+  $('#dashView').hidden = true; $('#loginView').hidden = false;
+  $('#logoutBtn').hidden = true;
+  $('#loginMsg').textContent = msg;
+}
+function logout(msg) {
+  T.token = ''; T.name = ''; T.all = []; T.sandbox = false; $('#sbChk').checked = false; $('#sbBar').hidden = true;
+  sessionStorage.removeItem('boyleT_token'); sessionStorage.removeItem('boyleT_name');
+  setAuto(false); showLogin(msg || '');
+}
+async function login() {
+  const name = '교사', pw = $('#tPw').value, msg = $('#loginMsg');
+  if (!pw) { msg.textContent = '비밀번호를 입력하세요.'; return; }
+  if (!apiReady()) { msg.textContent = 'config.js에 API_URL을 먼저 넣어 주세요. 샌드박스는 지금도 쓸 수 있어요.'; return; }
+  const b = $('#loginBtn'); b.disabled = true; b.textContent = '확인 중…';
+  try {
+    const r = await api('teacherLogin', { name, password: pw });
+    if (!r.ok) {
+      msg.textContent = ({ wrong: '비밀번호가 맞지 않아요.', no_password: 'Apps Script 스크립트 속성에 TEACHER_PASSWORD가 없어요.',
+        too_many: '로그인 실패가 많아 10분 동안 막혔어요.', no_name: '교사 이름을 입력하세요.' })[r.error] || ('오류: ' + r.error);
+      return;
+    }
+    T.token = r.token; T.name = r.name;
+    sessionStorage.setItem('boyleT_token', T.token); sessionStorage.setItem('boyleT_name', T.name);
+    $('#tPw').value = ''; showDash(); fetchAll();
+  } catch (e) { msg.textContent = '서버에 연결하지 못했어요: ' + e.message; }
+  finally { b.disabled = false; b.textContent = '로그인'; }
+}
+
+// ---------- 서버 ----------
+async function fetchAll() {
+  if (!T.token || T.busy) return;
+  T.busy = true; $('#tRefresh').classList.add('spin');
+  try {
+    const r = await api('teacherAll', { token: T.token });
+    if (!r.ok) { handleErr(r); return; }
+    T.all = r.rows || []; T.stamp = hhmm() + ' 기준';
+    render();
+  } catch (e) { toast('불러오지 못했어요: ' + e.message, 'bad'); }
+  finally { T.busy = false; $('#tRefresh').classList.remove('spin'); }
+}
+function handleErr(r) {
+  if (r.error === 'auth') { logout('로그인 시간이 끝났어요. 다시 로그인하세요.'); return; }
+  toast('오류: ' + r.error, 'bad');
+}
+function replaceRow(o) {
+  const i = T.all.findIndex(r => r.cls === o.cls && r.grp === o.grp);
+  if (i >= 0) T.all[i] = o; else T.all.push(o);
+  render();
+}
+function setAuto(on) {
+  clearInterval(T.auto); T.auto = null; $('#autoChk').checked = on;
+  if (on) T.auto = setInterval(() => {
+    if (!T.sandbox && $('#editModal').hidden && document.visibilityState === 'visible') fetchAll();
+  }, 20000);
+}
+
+// ---------- 그리기 ----------
+function render() {
+  if ($('#dashView').hidden) return;
+  renderChips(); renderCards(); renderPlot(); renderTable(); renderEfforts();
+  $('#clsTitle').textContent = clsLabel();
+  $('#tStamp').textContent = T.sandbox ? '저장 안 됨' : T.stamp;
+  $('#sbChk').disabled = false;
+}
+function renderChips() {
+  $('#clsChips').innerHTML = Array.from({ length: CLASS_COUNT }, (_, i) => {
+    const c = i + 1, rs = T.all.filter(r => r.cls === c), sub = rs.filter(r => r.submitted).length;
+    return `<button class="chip ${c === T.cls && !T.sandbox ? 'on' : ''}" data-c="${c}" ${T.sandbox ? 'disabled' : ''}>${c}반 <small>${sub}/8</small></button>`;
+  }).join('');
+}
+function renderCards() {
+  $('#gcards').innerHTML = GROUPS.map(g => {
+    const r = rowOf(g.n);
+    const st = !r ? { t: '미시작', k: 'none' } : r.submitted ? { t: '제출 완료 🔒', k: 'ok' } : { t: '입력 중', k: 'busy' };
+    const bad = r ? pvBadIdx(r) : [], lk = r && leakBad(r.leakP);
+    const names = r ? [r.roles.chromebook, r.roles.recorder, r.roles.syringe, r.three ? '' : r.roles.supplies].filter(Boolean).map(esc).join(', ') + (r.three ? ' (3명)' : '') : '';
+    const reqHtml = r ? reqList(r).map(([t, ok]) => `<span class="req ${ok ? 'ok' : ''}">${ok ? '✓' : '·'} ${esc(t)}</span>`).join('') : '<span class="req">아직 데이터 없음</span>';
+    const flags = (bad.length ? `<div class="flagline">⚠ P×V 범위 밖: ${bad.map(i => `${g.v[i]}mL (${pvOf(r.p[i], g.v[i]).toFixed(1)})`).join(', ')}</div>` : '') +
+      (lk ? `<div class="flagline">⚠ 누설 의심: 되돌린 압력 ${r.leakP}기압</div>` : '');
+    return `<div class="gcard ${bad.length || lk ? 'flag' : ''}" style="--gc:${g.color}" data-g="${g.n}">
+      <div class="gc-head"><span class="dot"></span><b>${g.n}모둠</b><span class="muted small">${g.name}</span><span class="pill ${st.k}">${st.t}</span></div>
+      <div class="gc-names nowrap" title="${names}">${names || '&nbsp;'}</div>
+      <div class="reqs">${reqHtml}</div>
+      ${flags}
+      <div class="gc-foot"><span class="time">${r && r.updatedAt ? r.updatedAt.slice(11, 16) + ' 저장' : ''}</span>
+        ${r && r.submitted ? '<button class="btn small" data-act="unlock">잠금 해제</button>' : ''}
+        <button class="btn small" data-act="edit">${r ? '수정' : '입력'}</button>
+        ${r ? '<button class="btn small danger" data-act="del">삭제</button>' : ''}
+      </div></div>`;
+  }).join('');
+}
+function renderPlot() {
+  const series = GROUPS.map(g => {
+    const r = rowOf(g.n);
+    return { g: g.n, label: `${g.n}모둠`, color: g.color, visible: T.vis[g.n] !== false,
+      points: g.v.map((v, i) => { const p = r ? r.p[i] : null; return { x: v, y: fin(p) ? p : null, flag: fin(p) && pvBad(pvOf(p, v)) }; }) };
+  });
+  plot.set({ series, theory: true, stamp: T.sandbox ? '샌드박스' : T.stamp });
+  $('#tLegend').innerHTML = series.map(s => {
+    const n = s.points.filter(p => fin(p.y)).length;
+    return `<button class="lg ${s.visible ? '' : 'off'}" data-g="${s.g}"><span class="dot" style="--gc:${s.color}"></span>${s.label} <span class="cnt">${n}/5</span></button>`;
+  }).join('');
+}
+function renderTable() {
+  const head = `<thead><tr><th>모둠</th>${[1, 2, 3, 4, 5].map(i => `<th>${i}</th>`).join('')}<th>누설</th></tr></thead>`;
+  const body = GROUPS.map(g => {
+    const r = rowOf(g.n), bad = r ? pvBadIdx(r) : [], lk = r && leakBad(r.leakP);
+    const cells = g.v.map((v, i) => {
+      const p = r ? r.p[i] : null, pv = pvOf(p, v);
+      return `<td class="${bad.includes(i) ? 'bad' : ''}"><div class="c-v">${v}mL</div><div class="c-p">${fin(p) ? p.toFixed(2) : '–'}</div><div class="c-pv">${pv != null ? pv.toFixed(1) : ''}</div><div class="c-v" style="color:${r && r.ret && r.ret[i] ? 'var(--ok)' : fin(p) ? 'var(--bad)' : 'inherit'}">${r && r.ret && r.ret[i] ? '복귀✓' : fin(p) ? '복귀✗' : ''}</div></td>`;
+    }).join('');
+    const leak = r ? `<td class="${lk ? 'bad' : ''}"><div class="c-v">${r.leakChecked ? '체크함' : '미체크'}</div><div class="c-p">${fin(r.leakP) ? r.leakP.toFixed(2) : '–'}</div><div class="c-pv"></div></td>` : '<td></td>';
+    return `<tr class="${bad.length || lk ? 'flag' : ''}"><td class="g"><span class="dot" style="--gc:${g.color}"></span> ${g.n}</td>${cells}${leak}</tr>`;
+  }).join('');
+  $('#ttable').innerHTML = head + '<tbody>' + body + '</tbody>';
+  const lo = (PV_TARGET * (1 - PV_TOL)).toFixed(1), hi = (PV_TARGET * (1 + PV_TOL)).toFixed(1);
+  $('#tableNote').textContent = `칸마다 부피, 압력, P×V 순서예요. P×V가 ${lo}~${hi}(${PV_TARGET} ±${PV_TOL * 100}%)를 벗어나면 빨갛게, 누설 압력이 1기압이 아니면 누설 칸이 빨갛게 표시돼요.`;
+}
+function renderEfforts() {
+  $('#ecards').innerHTML = GROUPS.map(g => {
+    const r = rowOf(g.n);
+    const pill = r ? `<span class="pill ${r.correct ? 'ok' : 'bad'}">${r.correct ? '결론 정답' : '결론 미통과'}, 채점 ${r.attempts}회</span>` : '';
+    return `<div class="ecard" style="--gc:${g.color}">
+      <div class="ec-head"><span class="dot"></span><b>${g.n}모둠</b>${pill}</div>
+      <div class="ec-l">오차를 줄이기 위한 노력</div><div class="ec-t">${r && r.effort ? esc(r.effort) : '<span class="muted">아직 없음</span>'}</div>
+      <div class="ec-l">결론</div><div class="ec-t">${r && r.conclusion ? esc(r.conclusion) : '<span class="muted">아직 없음</span>'}</div>
+    </div>`;
+  }).join('');
+}
+
+// ---------- 모둠 관리 ----------
+async function unlock(g) {
+  const label = `${clsLabel()} ${g}모둠`;
+  if (!confirm(`${label} 보고서의 잠금을 풀까요?\n학생이 다시 고칠 수 있게 돼요.`)) return;
+  if (T.sandbox) { const r = rowOf(g); r.submitted = false; r.submittedAt = ''; render(); return; }
+  try {
+    const r = await api('teacherUnlock', { token: T.token, cls: T.cls, grp: g });
+    if (!r.ok) return handleErr(r);
+    replaceRow(r.data); toast(`${label} 잠금을 풀었어요.`, 'ok');
+  } catch (e) { toast('잠금 해제 실패: ' + e.message, 'bad'); }
+}
+async function del(g) {
+  const label = `${clsLabel()} ${g}모둠`;
+  if (!confirm(`${label} 데이터를 모두 삭제할까요?\n되돌릴 수 없어요.`)) return;
+  if (T.sandbox) { T.sb = T.sb.filter(r => r.grp !== g); render(); return; }
+  try {
+    const r = await api('teacherDelete', { token: T.token, cls: T.cls, grp: g });
+    if (!r.ok) return handleErr(r);
+    T.all = T.all.filter(x => !(x.cls === T.cls && x.grp === g)); render(); toast(`${label} 데이터를 삭제했어요.`, 'ok');
+  } catch (e) { toast('삭제 실패: ' + e.message, 'bad'); }
+}
+function applyEThree() {
+  const t = $('#eThree').checked;
+  $('#eR_supplies').hidden = t; $('#eSupLbl').hidden = t;
+  $('#eRecLbl').textContent = t ? '기록 + 준비물' : '데이터 기록';
+}
+function openEdit(g) {
+  const r = rowOf(g) || blankRow(g), gi = gInfo(g);
+  T.editG = g;
+  $('#editTitle').innerHTML = `<span class="dot" style="--gc:${gi.color}"></span>${clsLabel()} ${g}모둠 데이터 수정`;
+  ROLE_KEYS.forEach(k => $('#eR_' + k).value = r.roles[k] || '');
+  $('#eThree').checked = r.three; applyEThree();
+  $('#ePs').innerHTML = gi.v.map((v, i) => `<label class="epr"><span>${v} mL</span><input class="num sm" data-i="${i}" inputmode="decimal" value="${fin(r.p[i]) ? r.p[i] : ''}"><label class="check small"><input type="checkbox" data-r="${i}" ${r.ret && r.ret[i] ? 'checked' : ''}> 30 mL 복귀</label></label>`).join('');
+  $('#eLeakChk').checked = r.leakChecked; $('#eLeakP').value = fin(r.leakP) ? r.leakP : '';
+  $('#eSub').checked = r.submitted; $('#eAtt').value = r.attempts || 0;
+  $('#eEffort').value = r.effort || ''; $('#eConcl').value = r.conclusion || '';
+  $('#eNote').textContent = T.sandbox ? '샌드박스: 시트에 저장되지 않아요.' : '결론 정답 여부는 저장할 때 다시 채점돼요.';
+  $('#editModal').hidden = false;
+}
+function closeEdit() { $('#editModal').hidden = true; T.editG = null; }
+async function saveEdit() {
+  const g = T.editG; if (!g) return;
+  const ps = $$('#ePs input.num').map(i => parseP(i.value)), lp = parseP($('#eLeakP').value);
+  const ret = $$('#ePs input[data-r]').map(c => c.checked);
+  if (ps.some(x => Number.isNaN(x)) || Number.isNaN(lp)) { toast('압력은 숫자로 입력하세요. 예: 1.25', 'warn'); return; }
+  const three = $('#eThree').checked, v = id => $(id).value.trim();
+  const data = {
+    roles: { chromebook: v('#eR_chromebook'), recorder: v('#eR_recorder'), syringe: v('#eR_syringe'), supplies: three ? v('#eR_recorder') : v('#eR_supplies') },
+    three, p: ps.map(x => fin(x) ? x : null), ret, leakChecked: $('#eLeakChk').checked, leakP: fin(lp) ? lp : null,
+    effort: $('#eEffort').value, conclusion: $('#eConcl').value, attempts: Math.max(0, parseInt($('#eAtt').value, 10) || 0),
+  };
+  const submitted = $('#eSub').checked;
+  if (T.sandbox) {
+    const old = rowOf(g) || blankRow(g);
+    const o = Object.assign({}, old, data, { correct: gradeConclusion(data.conclusion).correct, submitted, updatedAt: nowStr() });
+    T.sb = T.sb.filter(r => r.grp !== g).concat(o);
+    closeEdit(); render(); return;
+  }
+  const b = $('#eSave'); b.disabled = true; b.textContent = '저장 중…';
+  try {
+    const r = await api('teacherUpdate', { token: T.token, cls: T.cls, grp: g, data, submitted });
+    if (!r.ok) { handleErr(r); return; }
+    replaceRow(r.data); closeEdit(); toast(`${T.cls}반 ${g}모둠을 고쳤어요.`, 'ok');
+  } catch (e) { toast('저장 실패: ' + e.message, 'bad'); }
+  finally { b.disabled = false; b.textContent = '저장'; }
+}
+
+// ---------- CSV ----------
+function csvCell(v) {
+  let s = String(v ?? '');
+  if (/^[=+\-@]/.test(s)) s = "'" + s;
+  return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function toCSV(list) {
+  const H = ['반', '모둠', '모둠색', '크롬북입력', '데이터기록', '주사기조작', '준비물수령', '3명모둠'];
+  for (let i = 1; i <= 5; i++) H.push(`V${i}(mL)`, `P${i}(기압)`, `PV${i}`, `복귀${i}`);
+  H.push('PV범위밖개수', '누설확인', '누설압력', '누설의심', '오차줄이기노력', '결론', '결론정답', '채점시도', '제출', '수정시각', '제출시각');
+  const lines = [H];
+  list.slice().sort((a, b) => a.cls - b.cls || a.grp - b.grp).forEach(r => {
+    const g = gInfo(r.grp);
+    const row = [r.cls || '샌드박스', r.grp, g.name, r.roles.chromebook, r.roles.recorder, r.roles.syringe, r.roles.supplies, r.three ? 'O' : ''];
+    g.v.forEach((v, i) => { const p = r.p[i]; row.push(v, fin(p) ? p : '', fin(p) ? pvOf(p, v) : '', r.ret && r.ret[i] ? 'O' : ''); });
+    row.push(pvBadIdx(r).length, r.leakChecked ? 'O' : '', fin(r.leakP) ? r.leakP : '', leakBad(r.leakP) ? 'O' : '',
+      r.effort, r.conclusion, r.correct ? 'O' : 'X', r.attempts, r.submitted ? 'O' : '', r.updatedAt, r.submittedAt);
+    lines.push(row);
+  });
+  return '\ufeff' + lines.map(l => l.map(csvCell).join(',')).join('\r\n');
+}
+function download(text, name) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type: 'text/csv;charset=utf-8' }));
+  a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800);
+}
+const ymd = () => nowStr().slice(0, 10).replace(/-/g, '');
+
+// ---------- 샌드박스 예시 ----------
+function sampleRows() {
+  const names = ['김민준', '이서연', '박도윤', '최하은', '정우진', '강지우', '조예준', '윤서아'];
+  return GROUPS.map(g => {
+    const p = g.v.map(v => round(PV_TARGET / v * (1 + (Math.random() - 0.5) * 0.05), 2));
+    if (g.n === 3) p[1] = round(p[1] * 1.09, 2);              // 범위 밖 예시
+    const three = g.n === 5, n = i => names[(g.n + i) % names.length];
+    return Object.assign(blankRow(g.n), {
+      roles: { chromebook: n(0), recorder: n(1), syringe: n(2), supplies: three ? n(1) : n(3) }, three, p,
+      ret: [true, true, true, true, g.n !== 7], leakChecked: true, leakP: g.n === 6 ? 1.05 : 1,          // 누설 의심 예시
+      effort: '온도를 일정하게 하기 위해 주사기를 손으로 오래 쥐지 않았고, 피스톤을 천천히 움직인 뒤 압력계 바늘이 멈추면 읽었다.',
+      conclusion: g.n === 8 ? '압력이 커지면 부피가 작아진다.' : '기체의 압력과 부피는 반비례한다.',
+      correct: g.n !== 8, attempts: 1 + (g.n % 3), submitted: g.n % 2 === 0, updatedAt: nowStr(),
+    });
+  });
+}
+
+// ---------- 이벤트 ----------
+$('#loginBtn').onclick = login;
+$('#tPw').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+$('#logoutBtn').onclick = () => logout();
+$('#tRefresh').onclick = () => { if (T.sandbox) { toast('샌드박스 모드에서는 새로고침할 서버 데이터가 없어요.', 'warn'); return; } fetchAll(); };
+$('#autoChk').onchange = e => setAuto(e.target.checked);
+$('#clsChips').onclick = e => {
+  const b = e.target.closest('[data-c]'); if (!b || T.sandbox) return;
+  T.cls = +b.dataset.c; sessionStorage.setItem('boyleT_cls', T.cls); render(); fetchAll();
+};
+$('#gcards').onclick = e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const g = +b.closest('[data-g]').dataset.g;
+  ({ unlock, edit: openEdit, del })[b.dataset.act](g);
+};
+$('#tLegend').onclick = e => { const b = e.target.closest('[data-g]'); if (!b) return; const g = +b.dataset.g; T.vis[g] = T.vis[g] === false; renderPlot(); };
+$('#sbChk').onchange = e => {
+  if (!T.token) { e.target.checked = false; T.sandbox = false; $('#sbBar').hidden = true; showLogin('로그인한 뒤에 샌드박스를 쓸 수 있어요.'); return; }
+  T.sandbox = e.target.checked; $('#sbBar').hidden = !T.sandbox;
+  if (T.sandbox) { T.sb = JSON.parse(JSON.stringify(T.all.filter(r => r.cls === T.cls))); if (!T.sb.length) T.sb = sampleRows(); }
+  render();
+};
+$('#sbCopy').onclick = () => {
+  if (!T.token) { toast('로그인해야 실제 반 데이터를 복사할 수 있어요.', 'warn'); return; }
+  T.sb = JSON.parse(JSON.stringify(T.all.filter(r => r.cls === T.cls))); render(); toast(`${T.cls}반 데이터를 샌드박스로 복사했어요.`, 'ok');
+};
+$('#sbFill').onclick = () => { if (!T.token) return; T.sb = sampleRows(); render(); };
+$('#sbClear').onclick = () => { T.sb = []; render(); };
+$('#csvCls').onclick = () => {
+  const list = rows(); if (!list.length) { toast('내려받을 데이터가 없어요.', 'warn'); return; }
+  download(toCSV(list), `보일법칙_${T.sandbox ? '샌드박스' : T.cls + '반'}_${ymd()}.csv`);
+};
+$('#csvAll').onclick = () => {
+  if (T.sandbox) { $('#csvCls').click(); return; }
+  if (!T.all.length) { toast('내려받을 데이터가 없어요.', 'warn'); return; }
+  download(toCSV(T.all), `보일법칙_전체_${ymd()}.csv`);
+};
+$('#eThree').onchange = applyEThree;
+$('#eCancel').onclick = closeEdit;
+$('#eSave').onclick = saveEdit;
+$('#editModal').addEventListener('click', e => { if (e.target.id === 'editModal') closeEdit(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#editModal').hidden) closeEdit(); });
+$('#copyUrl').onclick = async () => {
+  try { await navigator.clipboard.writeText($('#stuUrl').textContent); toast('학생 주소를 복사했어요.', 'ok'); }
+  catch (e) { toast('복사하지 못했어요. 주소를 직접 선택해 복사하세요.', 'warn'); }
+};
+window.addEventListener('resize', () => { fitText($('#tBrand'), 12); fitText($('#stuUrl'), 9); });
+
+// ---------- 시작 ----------
+document.title = APP_TITLE + ' 교사 대시보드';
+$('#tAppTitle').textContent = APP_TITLE;
+$('#stuUrl').textContent = location.href.split('#')[0].split('?')[0];
+$('#previewLink').href = location.href.split('#')[0].split('?')[0] + '?demo=1';
+plot = createPlot($('#tPlot'));
+if (T.token) { showDash(); fetchAll(); } else showLogin('');
+fitText($('#tBrand'), 12); fitText($('#stuUrl'), 9);
+})();
+</script>
+<script>
+(() => {
+  // 주소 끝이 #teacher 이면 교사 대시보드, 아니면 학생 앱
+  function route() {
+    const t = location.hash === '#teacher';
+    $('#studentApp').hidden = t; $('#teacherApp').hidden = !t;
+    document.title = t ? APP_TITLE + ' 교사 대시보드' : APP_TITLE;
+    window.scrollTo(0, 0);
+    requestAnimationFrame(() => { fitText($(t ? '#tBrand' : '#brand'), 12); if (t) fitText($('#stuUrl'), 9); });
+    if (t && !$('#tPw').closest('[hidden]')) setTimeout(() => $('#tPw').focus(), 50);
+  }
+  window.addEventListener('hashchange', route);
+  route();
+})();
+</script>
+</body>
+</html>
