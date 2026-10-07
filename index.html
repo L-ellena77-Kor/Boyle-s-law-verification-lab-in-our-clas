@@ -510,7 +510,7 @@ footer { text-align: right; color: var(--dim); font-size: 11px; line-height: 1.2
   <!-- 2쪽 -->
   <section class="page" data-page="2">
     <div class="guide3">
-      <div class="g3"><span class="gn">1</span><div>피스톤을 <b>30 mL</b>에 맞추고 압력계가 <b>1기압</b>인지 확인한 뒤, <b>콕을 돌려 바깥쪽을 막아요.</b> 주사기와 압력계는 이어진 채로 둬요.</div></div>
+      <div class="g3"><span class="gn">1</span><div>피스톤을 <b>30 mL</b>에 맞추고 압력계가 <b>1기압</b>인지 확인한 뒤, <b>3방 밸브를 돌려 바깥쪽을 막아요.</b> 주사기와 압력계는 이어진 채로 둬요.</div></div>
       <div class="g3 alert"><span class="gn">2</span><div><strong>잠깐! 실험 전에 꼭 확인하세요.</strong> 피스톤을 <b>눌렀다가 다시 30 mL로 당겨</b> 압력계가 <b>1기압</b>으로 돌아오는지 확인하고, 아래 왼쪽 칸에 압력을 쓰고 <b>체크</b>하세요.</div></div>
       <div class="g3"><span class="gn">3</span><div><b>작은 부피부터</b> 하나씩: 부피를 맞춰 압력을 기록하고, <b>30 mL로 되돌려 1기압</b>인지 확인해 <b>복귀 체크</b>를 누른 뒤 다음 부피로 가요. 압력은 <b>소수 둘째 자리까지</b> 써요.</div></div>
     </div>
@@ -553,7 +553,7 @@ footer { text-align: right; color: var(--dim); font-size: 11px; line-height: 1.2
         <div class="tips">
           <div class="tip"><span class="ti">🌡️</span><div><b>온도</b><span>주사기를 손으로 오래 쥐었나요?</span></div></div>
           <div class="tip"><span class="ti">👀</span><div><b>눈금 읽기</b><span>어느 방향에서 눈금을 읽었나요?</span></div></div>
-          <div class="tip"><span class="ti">🔒</span><div><b>공기 누설</b><span>콕과 연결 부분을 어떻게 확인했나요?</span></div></div>
+          <div class="tip"><span class="ti">🔒</span><div><b>공기 누설</b><span>3방 밸브와 연결 부분을 어떻게 확인했나요?</span></div></div>
           <div class="tip"><span class="ti">🐢</span><div><b>피스톤 속도</b><span>얼마나 빠르게 움직였나요?</span></div></div>
           <div class="tip"><span class="ti">⏱️</span><div><b>읽는 때</b><span>바늘이 멈춘 뒤에 읽었나요?</span></div></div>
         </div>
@@ -1215,7 +1215,7 @@ function rigTarget() {
   return { V: g.v[i], P: fin(ps[i]) ? ps[i] : null, label: `${i + 1}번째 부피` };
 }
 function rigSVG(V, P) {
-  // 실물과 같은 배치: 왼쪽 압력계 ─ 가운데 3방향 콕 ─ 오른쪽 주사기(눈금 60 mL)
+  // 실물과 같은 배치: 왼쪽 압력계 ─ 가운데 3방 밸브 ─ 오른쪽 주사기(눈금 60 mL)
   const my = 92, top = 64, bot = 120;
   const x0 = 262, k = 3.55, xp = x0 + V * k;          // x0 = 0 mL 눈금, xp = 고무 마개 앞면
   const bEnd = x0 + 60 * k + 10;                       // 실린더 오른쪽 끝(손가락 날개)
@@ -1249,7 +1249,7 @@ function rigSVG(V, P) {
   s += `<rect x="${cx + 84}" y="${my - 6}" width="${x0 - cx - 84}" height="12" rx="3" fill="rgba(124,196,255,.22)" stroke="#5f77ad" stroke-width="1.5"/>`;
   s += `<line x1="${cx + 86}" y1="${my}" x2="${x0}" y2="${my}" stroke="#9fd4ff" stroke-width="3" stroke-dasharray="5 6"/>`;
 
-  // ---------- 3방향 콕 (사진 왼쪽 '닫힘' 모양) ----------
+  // ---------- 3방 밸브 (사진 왼쪽 '닫힘' 모양) ----------
   // 투명 관이 좌우(압력계↔주사기)로 지나가고, 아래로 투명한 바깥 구멍이 있음.
   // 파란 손잡이 날개는 위·왼쪽·오른쪽 → 왼쪽·오른쪽은 열리고, 날개가 없는 아래쪽(바깥)은 막힘.
   const kx = 204;
@@ -1265,7 +1265,7 @@ function rigSVG(V, P) {
   s += `<circle cx="${kx}" cy="${my}" r="15" fill="#3b82f6" stroke="#9cc3ff" stroke-width="1.5"/>`;
   s += `<circle cx="${kx}" cy="${my}" r="6" fill="#0f2a5c"/>`;
   s += `<line x1="${kx - 34}" y1="${my}" x2="${kx + 34}" y2="${my}" stroke="#9fd4ff" stroke-width="2.5" stroke-dasharray="4 4" opacity=".9"/>`;   // 열린 길
-  s += `<text x="${kx}" y="${my - 50}" text-anchor="middle" font-size="18" font-weight="900" fill="#9cc3ff">콕</text>`;
+  s += `<text x="${kx}" y="${my - 50}" text-anchor="middle" font-size="18" font-weight="900" fill="#9cc3ff">3방 밸브</text>`;
 
   // ---------- 주사기 ----------
   s += `<rect x="${x0 - 22}" y="${my - 7}" width="24" height="14" rx="3" fill="#cfd8ea" fill-opacity=".35" stroke="#8fa3cc" stroke-width="1.5"/>`; // 노즐
@@ -1413,7 +1413,7 @@ function updateDerived() {
   $('#leakP').classList.toggle('fmt', fin(lp) && !dec2(d.leakRaw));
   $('#leakChkWrap').classList.toggle('filled', d.leakChecked);
   if (Number.isNaN(lp)) { lm.className = 'msg bad'; lm.textContent = '숫자로 입력하세요. 예: 1.00'; }
-  else if (leakBad(lp)) { lm.className = 'msg warn'; lm.textContent = '⚠ 1기압이 아니에요. 공기가 새는 것 같아요. 콕이 바깥쪽을 막고 있는지, 주사기와 압력계가 이어져 있는지 확인하세요.'; }
+  else if (leakBad(lp)) { lm.className = 'msg warn'; lm.textContent = '⚠ 1기압이 아니에요. 공기가 새는 것 같아요. 3방 밸브가 바깥쪽을 막고 있는지, 주사기와 압력계가 이어져 있는지 확인하세요.'; }
   else if (fin(lp) && d.leakChecked) { lm.className = 'msg ok'; lm.textContent = '✓ 공기가 새지 않아요. 이제 오른쪽 표에 측정값을 기록하세요.'; }
   else { lm.className = 'msg'; lm.textContent = ''; }
 
@@ -1520,7 +1520,7 @@ $('#leakP').addEventListener('focus', () => { S.focus = 'leak'; renderRig(); });
 $('#leakP').addEventListener('input', e => { S.d.leakRaw = e.target.value; markDirty(); });
 $('#leakP').addEventListener('change', e => {
   const v = parseP(e.target.value);
-  if (leakBad(v)) { Sound.play('warn'); toast('1기압이 아니에요. 콕 방향(바깥쪽 막힘)을 확인하고 다시 눌렀다 당겨 보세요.', 'warn'); }
+  if (leakBad(v)) { Sound.play('warn'); toast('1기압이 아니에요. 3방 밸브 방향(바깥쪽 막힘)을 확인하고 다시 눌렀다 당겨 보세요.', 'warn'); }
   else if (fin(v) && !dec2(e.target.value)) fmtWarn(e.target.value); else if (fin(v)) Sound.play('step'); else if (Number.isNaN(v)) Sound.play('no');
 });
 $('#leakP').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('#leakChk').focus(); } });
