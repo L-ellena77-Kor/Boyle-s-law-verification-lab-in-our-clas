@@ -187,7 +187,10 @@ input.num.fmt { border-color: var(--warn) !important; box-shadow: 0 0 0 4px rgba
 /* ---------- 칩 ---------- */
 .chips { display: flex; flex-wrap: wrap; gap: 9px; }
 .chips.cls { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
-.chips.grp { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.chips.grp { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 7px; }
+.chips.grp .chip { font-size: 17px; padding: 6px 3px 5px; gap: 2px; }
+.chips.grp .chip small { font-size: 12px; }
+.chips.grp .chip .sw { height: 6px; }
 .chip {
   padding: 12px 10px; border-radius: 12px; border: 2px solid var(--line2); background: var(--panel2);
   cursor: pointer; font-weight: 800; font-size: 19px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap;
@@ -243,10 +246,10 @@ input:disabled, textarea:disabled { opacity: .6; cursor: not-allowed; }
 .check.big.filled { border-color: rgba(111,224,138,.55); }
 
 /* ---------- 1쪽 ---------- */
-.roles { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.roles { display: grid; grid-template-columns: 1fr; gap: 14px; }
 .role { display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 14px; background: rgba(11,20,38,.55); border: 1px solid var(--line); }
 .role .rt { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 800; color: var(--muted); white-space: nowrap; }
-.role .ico { font-size: 26px; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px; background: var(--panel2); flex: none; }
+.role .ico { font-size: 22px; width: 64px; height: 44px; display: grid; place-items: center; border-radius: 12px; background: var(--panel2); flex: none; }
 .three-box { display: flex; align-items: center; gap: 12px; margin-top: 16px; padding: 12px 14px; border-radius: 12px; background: rgba(124,196,255,.07); border: 1px dashed rgba(124,196,255,.4); font-size: 16px; color: var(--muted); }
 .three-box .check { color: var(--text); font-size: 18px; }
 
@@ -353,7 +356,7 @@ footer { text-align: right; color: var(--dim); font-size: 11px; line-height: 1.2
 .sandbox-bar .sp { flex: 1; }
 .sec { font-size: 22px; font-weight: 900; margin: 24px 0 12px; display: flex; align-items: center; gap: 12px; }
 .sec .muted { font-size: 15px; font-weight: 600; }
-.gcards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.gcards { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
 .gcard {
   background: linear-gradient(180deg, rgba(31,47,82,.92), rgba(20,32,57,.94)); border: 1px solid var(--line); border-top: 5px solid var(--gc);
   border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; box-shadow: 0 10px 26px rgba(0,0,0,.25);
@@ -379,7 +382,7 @@ footer { text-align: right; color: var(--dim); font-size: 11px; line-height: 1.2
 .ttable td.bad .c-pv { color: var(--bad); font-weight: 900; }
 .ttable tr.flag td.g { box-shadow: inset 4px 0 var(--bad); }
 .table-note { font-size: 14px; color: var(--muted); margin-top: 10px; }
-.ecards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.ecards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .ecard { background: linear-gradient(180deg, rgba(31,47,82,.92), rgba(20,32,57,.94)); border: 1px solid var(--line); border-left: 5px solid var(--gc); border-radius: 14px; padding: 12px 16px; }
 .ec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 18px; }
 .ec-head .pill { margin-left: auto; }
@@ -434,6 +437,21 @@ footer { text-align: right; color: var(--dim); font-size: 11px; line-height: 1.2
   color: var(--text); text-decoration: none; background: rgba(255,90,90,.12); border: 1px solid rgba(255,110,110,.5); white-space: nowrap; }
 .ytbtn:hover { background: rgba(255,90,90,.22); }
 .ytbtn .yt-ico { display: inline-grid; place-items: center; width: 26px; height: 19px; border-radius: 6px; background: #e94b4b; color: #fff; font-size: 11px; }
+
+/* 15모둠: 점 모양 ● ■ ▲ */
+.dot.sq { border-radius: 3px; }
+.dot.tri { border-radius: 0; clip-path: polygon(50% 0, 100% 100%, 0 100%); box-shadow: none; }
+.legend { gap: 5px; }
+.lg { padding: 4px 9px; font-size: 13.5px; gap: 5px; }
+.lg .cnt { font-size: 11.5px; }
+/* 15모둠 교사 카드: 좁은 칸에 맞게 */
+.gcard { padding: 10px 11px; gap: 6px; }
+.gc-head { font-size: 17px; gap: 6px; }
+.gc-head .pill { font-size: 12px; padding: 3px 8px; }
+.gc-head .muted.small { font-size: 12px; }
+.gc-foot { flex-wrap: wrap; gap: 4px; }
+.gc-foot .time { flex: 1 0 100%; margin: 0 0 2px; }
+.gc-foot .btn.small { font-size: 13px; padding: 5px 9px; }
 </style>
 </head>
 <body>
@@ -469,22 +487,22 @@ footer { text-align: right; color: var(--dim); font-size: 11px; line-height: 1.2
     <div class="intro">
       <div class="intro-txt">
         <span class="hero-tag">오늘의 미션</span>
-        <h1 id="introTitle">우리 반 점 <em>40개</em>로 <em>보일 법칙</em> 검증하기</h1>
+        <h1 id="introTitle">우리 반 점 <em>75개</em>로 <em>보일 법칙</em> 검증하기</h1>
         <p class="q">🤔 주사기 속 공기를 꾹 누르면, 공기의 압력은 어떻게 변할까요?</p>
         <p>우리 모둠은 정해진 부피 <b>5곳</b>에서 압력을 재서 <b>점 5개</b>를 만들어요.</p>
-        <p>8개 모둠의 점이 모두 모이면 <b>점 40개!</b> 한 그래프에 모인 점들이 <b>어떤 모양을 그리는지</b> 살펴보면서, 보일 법칙이 정말 맞는지 우리 손으로 확인해 봐요.</p>
+        <p>15개 모둠의 점이 모두 모이면 <b>점 75개!</b> 한 그래프에 모인 점들이 <b>어떤 모양을 그리는지</b> 살펴보면서, 보일 법칙이 정말 맞는지 우리 손으로 확인해 봐요.</p>
       </div>
       <div class="intro-art">
-        <svg id="heroDots" class="anim" viewBox="0 0 292 118" role="img" aria-label="8개 모둠의 측정점 40개"></svg>
-        <div class="hero-cap" id="heroCap">점 40개가 모이면 무엇이 보일까?</div>
-        <div class="intro-eq">점 5개 × 8모둠 = <b>40개</b></div>
+        <svg id="heroDots" class="anim" viewBox="0 0 520 118" role="img" aria-label="15개 모둠의 측정점 75개"></svg>
+        <div class="hero-cap" id="heroCap">점 75개가 모이면 무엇이 보일까?</div>
+        <div class="intro-eq">점 5개 × 15모둠 = <b>75개</b></div>
       </div>
     </div>
     <div class="todo">
       <button data-goto="1"><span class="tn">1</span><div><b>모둠과 역할</b><span class="ts">반·모둠 고르고 이름 쓰기</span></div></button>
       <button data-goto="2"><span class="tn">2</span><div><b>데이터 입력</b><span class="ts">실험 전 확인, 압력 재기</span></div></button>
       <button data-goto="3"><span class="tn">3</span><div><b>오차 줄이기</b><span class="ts">정확하게 재려고 한 노력</span></div></button>
-      <button data-goto="4"><span class="tn">4</span><div><b>학급 정리</b><span class="ts">40개 점 그래프 보고 결론</span></div></button>
+      <button data-goto="4"><span class="tn">4</span><div><b>학급 정리</b><span class="ts">75개 점 그래프 보고 결론</span></div></button>
     </div>
     <div class="start-row"><button class="btn primary" id="startBtn">실험 시작하기 ▶</button></div>
   </section>
@@ -502,12 +520,10 @@ footer { text-align: right; color: var(--dim); font-size: 11px; line-height: 1.2
       <div class="card">
         <h2><span class="hi">🧑‍🔬</span>모둠 역할</h2>
         <div class="roles">
-          <label class="role"><span class="rt"><span class="ico">💻</span>크롬북 입력</span><input class="field lockable" data-role="chromebook" maxlength="20" placeholder="이름" autocomplete="off"></label>
-          <label class="role"><span class="rt"><span class="ico">📝</span><span id="recorderLabel">데이터 기록</span></span><input class="field lockable" data-role="recorder" maxlength="20" placeholder="이름" autocomplete="off"></label>
-          <label class="role"><span class="rt"><span class="ico">💉</span>주사기 조작</span><input class="field lockable" data-role="syringe" maxlength="20" placeholder="이름" autocomplete="off"></label>
-          <label class="role" id="roleSupplies"><span class="rt"><span class="ico">📦</span>준비물 수령</span><input class="field lockable" data-role="supplies" maxlength="20" placeholder="이름" autocomplete="off"></label>
+          <label class="role"><span class="rt"><span class="ico">📦💉</span>준비물 수령 + 주사기 조작</span><input class="field lockable" data-role="syringe" maxlength="20" placeholder="이름" autocomplete="off"></label>
+          <label class="role"><span class="rt"><span class="ico">📝💻</span>데이터 기록 + 크롬북 입력</span><input class="field lockable" data-role="recorder" maxlength="20" placeholder="이름" autocomplete="off"></label>
         </div>
-        <div class="three-box"><label class="check"><input type="checkbox" id="three" class="lockable"> 3명 모둠</label><span>한 사람이 데이터 기록과 준비물 수령을 함께 맡아요.</span></div>
+        <div class="three-box"><span>👥 3명 모둠이면 한 칸에 두 이름을 함께 써요. (예: 김민준·이서연)</span></div>
       </div>
     </div>
   </section>
@@ -666,12 +682,10 @@ footer { text-align: right; color: var(--dim); font-size: 11px; line-height: 1.2
     <h2 id="editTitle"></h2>
     <div class="grid2">
       <div>
-        <div class="label">역할 이름 <label class="check small"><input type="checkbox" id="eThree"> 3명 모둠</label></div>
+        <div class="label">역할 이름</div>
         <div class="egrid">
-          <span>크롬북 입력</span><input class="field" id="eR_chromebook" maxlength="20">
-          <span id="eRecLbl">데이터 기록</span><input class="field" id="eR_recorder" maxlength="20">
-          <span>주사기 조작</span><input class="field" id="eR_syringe" maxlength="20">
-          <span id="eSupLbl">준비물 수령</span><input class="field" id="eR_supplies" maxlength="20">
+          <span>준비물·주사기</span><input class="field" id="eR_syringe" maxlength="20">
+          <span>기록·크롬북</span><input class="field" id="eR_recorder" maxlength="20">
         </div>
         <div class="label">누설 확인</div>
         <div class="row" style="margin-top:0"><label class="check"><input type="checkbox" id="eLeakChk"> 1기압 확인함</label><input class="num sm" id="eLeakP" inputmode="decimal"> 기압</div>
@@ -723,15 +737,25 @@ const MIN_EFFORT_LEN = 10;   // '오차 줄이기 노력' 최소 글자 수 (Cod
 
 // 4) 모둠별 색과 부피 (작은 순) — Code.gs의 VOLUMES와 같게 유지
 const GROUPS = [
-  { n: 1, name: '빨강', color: '#ff6b6b', v: [16, 22, 29, 36, 45] },
-  { n: 2, name: '주황', color: '#ffa94d', v: [17, 23, 31, 38, 42] },
-  { n: 3, name: '노랑', color: '#ffe066', v: [18, 24, 32, 40, 43] },
-  { n: 4, name: '초록', color: '#69db7c', v: [19, 25, 32, 37, 44] },
-  { n: 5, name: '파랑', color: '#4dabf7', v: [20, 26, 34, 38, 45] },
-  { n: 6, name: '남색', color: '#7f8cff', v: [21, 24, 33, 39, 46] },
-  { n: 7, name: '보라', color: '#cc8cff', v: [19, 27, 34, 40, 47] },
-  { n: 8, name: '핑크', color: '#ff8cc6', v: [21, 28, 35, 41, 48] },
+  { n: 1, name: '빨강', color: '#ff5c5c', v: [15, 23, 31, 39, 47] },
+  { n: 2, name: '주황', color: '#ff9f43', v: [16, 24, 32, 40, 48] },
+  { n: 3, name: '노랑', color: '#ffe14d', v: [17, 25, 34, 42, 50] },
+  { n: 4, name: '연두', color: '#b5e655', v: [18, 22, 28, 36, 44] },
+  { n: 5, name: '초록', color: '#3ddc84', v: [19, 26, 33, 38, 45] },
+  { n: 6, name: '청록', color: '#2ed3c6', v: [20, 27, 35, 40, 46] },
+  { n: 7, name: '하늘', color: '#5ac8fa', v: [15, 21, 29, 42, 49] },
+  { n: 8, name: '파랑', color: '#3b82f6', v: [16, 22, 29, 37, 44] },
+  { n: 9, name: '남색', color: '#7b7bff', v: [17, 23, 32, 41, 46] },
+  { n: 10, name: '보라', color: '#a66bff', v: [18, 24, 33, 43, 48] },
+  { n: 11, name: '자주', color: '#d65db1', v: [19, 25, 34, 41, 50] },
+  { n: 12, name: '분홍', color: '#ff8cc6', v: [15, 21, 28, 36, 45] },
+  { n: 13, name: '갈색', color: '#c08a5a', v: [17, 26, 34, 43, 49] },
+  { n: 14, name: '회색', color: '#aab4c3', v: [20, 27, 35, 40, 47] },
+  { n: 15, name: '흰색', color: '#ffffff', v: [16, 24, 31, 39, 48] },
 ];
+// 점 모양: 비슷한 색끼리도 구별되도록 ● ■ ▲ 를 번갈아 씀
+const SHAPES = ['', 'sq', 'tri'];
+const shapeOf = n => SHAPES[(n - 1) % 3];
 
 </script>
 <script>
@@ -867,7 +891,7 @@ const Sound = (() => {
 // P-V 산점도 (외부 라이브러리 없이 canvas로 그림)
 function createPlot(canvas) {
   const ctx = canvas.getContext('2d');
-  const st = { series: [], theory: false, stamp: '', xMax: 50, emptyText: '아직 표시할 데이터가 없어요' };
+  const st = { series: [], theory: false, stamp: '', xMax: 55, emptyText: '아직 표시할 데이터가 없어요' };
   const FONT = "'Pretendard','Noto Sans KR',sans-serif";
   let hits = [], hover = null;
 
@@ -942,7 +966,11 @@ function createPlot(canvas) {
         ctx.beginPath(); ctx.arc(x, y, 12.5, 0, Math.PI * 2);
         ctx.strokeStyle = '#ff4d4d'; ctx.lineWidth = 2.5; ctx.stroke();
       }
-      ctx.beginPath(); ctx.arc(x, y, s.own ? 8.5 : 6.5, 0, Math.PI * 2);
+      const rr = s.own ? 8.5 : 6.5, sh = shapeOf(s.g);
+      ctx.beginPath();
+      if (sh === 'sq') ctx.rect(x - rr * .9, y - rr * .9, rr * 1.8, rr * 1.8);
+      else if (sh === 'tri') { ctx.moveTo(x, y - rr * 1.15); ctx.lineTo(x + rr * 1.1, y + rr * .8); ctx.lineTo(x - rr * 1.1, y + rr * .8); ctx.closePath(); }
+      else ctx.arc(x, y, rr, 0, Math.PI * 2);
       ctx.fillStyle = s.color; ctx.fill();
       ctx.lineWidth = s.own ? 2.5 : 1.2; ctx.strokeStyle = s.own ? '#ffffff' : 'rgba(0,0,0,.55)'; ctx.stroke();
       hits.push({ x, y, s, p });
@@ -1001,7 +1029,7 @@ function createPlot(canvas) {
 (() => {
 const DEMO = new URLSearchParams(location.search).has('demo');
 const LS = DEMO ? 'boyle_demo_' : 'boyle_v1_';
-const ROLE_LABEL = { chromebook: '크롬북 입력', recorder: '데이터 기록', syringe: '주사기 조작', supplies: '준비물 수령' };
+const ROLE_LABEL = { syringe: '준비물·주사기', recorder: '기록·크롬북' };
 
 const S = {
   selC: null, selG: null, cls: null, grp: null, d: null, page: 1,
@@ -1049,14 +1077,14 @@ function hasContent(d) {
 }
 const G = () => gInfo(S.grp);
 const pressures = () => S.d.pRaw.map(parseP);
-const roleKeys = () => S.d.three ? ['chromebook', 'recorder', 'syringe'] : ['chromebook', 'recorder', 'syringe', 'supplies'];
+const roleKeys = () => ['syringe', 'recorder'];
 
 function payload() {
   const d = S.d, r = d.roles, lp = parseP(d.leakRaw);
   return {
-    roles: { chromebook: r.chromebook.trim(), recorder: r.recorder.trim(), syringe: r.syringe.trim(),
-      supplies: (d.three ? r.recorder : r.supplies).trim() },
-    three: d.three, p: pressures().map(x => fin(x) ? x : null), ret: d.ret.slice(),
+    // 2인 모둠: 준비물 수령 = 주사기 조작 담당, 크롬북 입력 = 데이터 기록 담당 (시트 칸은 그대로 4개)
+    roles: { syringe: r.syringe.trim(), supplies: r.syringe.trim(), recorder: r.recorder.trim(), chromebook: r.recorder.trim() },
+    three: false, p: pressures().map(x => fin(x) ? x : null), ret: d.ret.slice(),
     leakChecked: d.leakChecked, leakP: fin(lp) ? lp : null,
     effort: d.effort, conclusion: d.conclusion, attempts: d.attempts,
   };
@@ -1064,7 +1092,7 @@ function payload() {
 
 function reqs() {
   const d = S.d, r = d.roles;
-  const empty = roleKeys().filter(k => !r[k].trim()).map(k => (k === 'recorder' && d.three) ? '기록·준비물' : ROLE_LABEL[k]);
+  const empty = roleKeys().filter(k => !r[k].trim()).map(k => ROLE_LABEL[k]);
   const ps = pressures(), nOk = ps.filter(fin).length, nBad = ps.filter(x => Number.isNaN(x)).length;
   const lp = parseP(d.leakRaw), el = d.effort.trim().length;
   return [
@@ -1327,18 +1355,18 @@ function buildChips() {
   $('#groupChips').innerHTML = GROUPS.map(g => `<button class="chip g" data-g="${g.n}" style="--gc:${g.color}"><span class="sw"></span>${g.n}모둠<small>${g.name}</small></button>`).join('');
 }
 function renderHero() {
-  const W = 34, x0 = 24;
+  const W = 33, x0 = 29;
   let s = '';
   GROUPS.forEach((g, c) => {
     const own = g.n === S.selG, x = x0 + c * W, dim = S.selG && !own;
     if (own) s += `<rect x="${x - 14}" y="2" width="28" height="100" rx="14" fill="${g.color}" fill-opacity=".16" stroke="${g.color}" stroke-width="2"/>`;
     for (let r = 0; r < 5; r++) {
-      s += `<circle cx="${x}" cy="${14 + r * 19}" r="${own ? 7.5 : 6.5}" fill="${g.color}" opacity="${dim ? 0.3 : 0.95}" style="--d:${(c * 5 + r) * 0.045}s"/>`;
+      s += `<circle cx="${x}" cy="${14 + r * 19}" r="${own ? 7.5 : 6.5}" fill="${g.color}" opacity="${dim ? 0.3 : 0.95}" style="--d:${(c * 5 + r) * 0.025}s"/>`;
     }
     s += `<text x="${x}" y="115" text-anchor="middle" font-size="12" font-weight="800" fill="${own ? g.color : '#a7b4d0'}">${g.n}</text>`;
   });
   $('#heroDots').innerHTML = s;
-  $('#heroCap').textContent = S.selG ? `${S.selG}모둠의 점 5개도 여기에 들어가요!` : '점 40개가 모이면 무엇이 보일까?';
+  $('#heroCap').textContent = S.selG ? `${S.selG}모둠의 점 5개도 여기에 들어가요!` : '점 75개가 모이면 무엇이 보일까?';
 }
 function paintChips() {
   renderHero();
@@ -1370,11 +1398,6 @@ function buildTable() {
      <td><label class="retWrap" data-i="${i}"><input type="checkbox" class="retChk lockable" data-i="${i}">1기압</label></td></tr>`).join('');
 }
 
-function applyThree() {
-  const t = S.d.three;
-  $('#roleSupplies').hidden = t;
-  $('#recorderLabel').textContent = t ? '데이터 기록 + 준비물 수령' : '데이터 기록';
-}
 function applyLock() {
   const L = !!S.d.submitted, off = L || !S.grp;
   $$('.lockable').forEach(el => el.disabled = off);
@@ -1391,7 +1414,6 @@ function renderAll() {
     $('#who').innerHTML = `<span class="dot" style="--gc:${g.color}"></span>${S.cls}반 ${S.grp}모둠 <span class="muted">${g.name}</span>`;
   }
   $$('[data-role]').forEach(inp => inp.value = d.roles[inp.dataset.role] || '');
-  $('#three').checked = d.three; applyThree();
   $$('.pIn').forEach(inp => inp.value = d.pRaw[+inp.dataset.i]);
   $('#leakChk').checked = d.leakChecked; $('#leakP').value = d.leakRaw;
   $('#effort').value = d.effort; $('#conclusion').value = d.conclusion;
@@ -1467,7 +1489,7 @@ function updatePlot() {
   plot.set({ series, theory: false, stamp: S.stamp });
   $('#legend').innerHTML = series.map(s => {
     const n = s.points.filter(p => fin(p.y)).length;
-    return `<button class="lg ${s.visible ? '' : 'off'} ${s.own ? 'own' : ''}" data-g="${s.g}"><span class="dot" style="--gc:${s.color}"></span>${s.label}${s.own ? ' (우리)' : ''} <span class="cnt">${n}/5</span></button>`;
+    return `<button class="lg ${s.visible ? '' : 'off'} ${s.own ? 'own' : ''}" data-g="${s.g}"><span class="dot ${shapeOf(s.g)}" style="--gc:${s.color}"></span>${s.label}${s.own ? ' (우리)' : ''} <span class="cnt">${n}/5</span></button>`;
   }).join('');
 }
 
@@ -1496,7 +1518,6 @@ $$('[data-role]').forEach(inp => {
     const t = targetFor(1); if (t && t.el.startsWith('[data-role')) $(t.el).focus(); else $('#nextBtn').focus();
   });
 });
-$('#three').addEventListener('change', e => { S.d.three = e.target.checked; Sound.play('tap'); applyThree(); markDirty(); });
 
 $('#dataBody').addEventListener('input', e => {
   const t = e.target; if (!t.classList.contains('pIn')) return;
@@ -1644,7 +1665,7 @@ const T = {
   sandbox: false, sb: [], vis: {}, stamp: '', busy: false, auto: null, editG: null,
 };
 let plot;
-const ROLE_KEYS = ['chromebook', 'recorder', 'syringe', 'supplies'];
+const ROLE_KEYS = ['syringe', 'recorder'];
 const clsLabel = () => T.sandbox ? '샌드박스' : `${T.cls}반`;
 
 function rows() { return T.sandbox ? T.sb : T.all.filter(r => r.cls === T.cls); }
@@ -1654,7 +1675,7 @@ function blankRow(g) {
     p: [null, null, null, null, null], ret: [false, false, false, false, false], leakChecked: false, leakP: null, effort: '', conclusion: '', correct: false,
     attempts: 0, submitted: false, updatedAt: '', submittedAt: '', updatedMs: 0 };
 }
-function rolesOk(r) { const o = r.roles; return !!(o.chromebook && o.recorder && o.syringe && (r.three || o.supplies)); }
+function rolesOk(r) { const o = r.roles; return !!(o.syringe && o.recorder); }
 function reqList(r) {
   const n = r.p.filter(fin).length;
   const rn = (r.ret || []).filter(Boolean).length;
@@ -1737,7 +1758,7 @@ function render() {
 function renderChips() {
   $('#clsChips').innerHTML = Array.from({ length: CLASS_COUNT }, (_, i) => {
     const c = i + 1, rs = T.all.filter(r => r.cls === c), sub = rs.filter(r => r.submitted).length;
-    return `<button class="chip ${c === T.cls && !T.sandbox ? 'on' : ''}" data-c="${c}" ${T.sandbox ? 'disabled' : ''}>${c}반 <small>${sub}/8</small></button>`;
+    return `<button class="chip ${c === T.cls && !T.sandbox ? 'on' : ''}" data-c="${c}" ${T.sandbox ? 'disabled' : ''}>${c}반 <small>${sub}/${GROUPS.length}</small></button>`;
   }).join('');
 }
 function renderCards() {
@@ -1745,7 +1766,7 @@ function renderCards() {
     const r = rowOf(g.n);
     const st = !r ? { t: '미시작', k: 'none' } : r.submitted ? { t: '제출 완료 🔒', k: 'ok' } : { t: '입력 중', k: 'busy' };
     const bad = r ? pvBadIdx(r) : [], lk = r && leakBad(r.leakP);
-    const names = r ? [r.roles.chromebook, r.roles.recorder, r.roles.syringe, r.three ? '' : r.roles.supplies].filter(Boolean).map(esc).join(', ') + (r.three ? ' (3명)' : '') : '';
+    const names = r ? [r.roles.syringe, r.roles.recorder].filter(Boolean).map(esc).join(', ') : '';
     const reqHtml = r ? reqList(r).map(([t, ok]) => `<span class="req ${ok ? 'ok' : ''}">${ok ? '✓' : '·'} ${esc(t)}</span>`).join('') : '<span class="req">아직 데이터 없음</span>';
     const flags = (bad.length ? `<div class="flagline">⚠ P×V 범위 밖: ${bad.map(i => `${g.v[i]}mL (${pvOf(r.p[i], g.v[i]).toFixed(1)})`).join(', ')}</div>` : '') +
       (lk ? `<div class="flagline">⚠ 누설 의심: 되돌린 압력 ${r.leakP}기압</div>` : '');
@@ -1770,7 +1791,7 @@ function renderPlot() {
   plot.set({ series, theory: true, stamp: T.sandbox ? '샌드박스' : T.stamp });
   $('#tLegend').innerHTML = series.map(s => {
     const n = s.points.filter(p => fin(p.y)).length;
-    return `<button class="lg ${s.visible ? '' : 'off'}" data-g="${s.g}"><span class="dot" style="--gc:${s.color}"></span>${s.label} <span class="cnt">${n}/5</span></button>`;
+    return `<button class="lg ${s.visible ? '' : 'off'}" data-g="${s.g}"><span class="dot ${shapeOf(s.g)}" style="--gc:${s.color}"></span>${s.label} <span class="cnt">${n}/5</span></button>`;
   }).join('');
 }
 function renderTable() {
@@ -1821,17 +1842,11 @@ async function del(g) {
     T.all = T.all.filter(x => !(x.cls === T.cls && x.grp === g)); render(); toast(`${label} 데이터를 삭제했어요.`, 'ok');
   } catch (e) { toast('삭제 실패: ' + e.message, 'bad'); }
 }
-function applyEThree() {
-  const t = $('#eThree').checked;
-  $('#eR_supplies').hidden = t; $('#eSupLbl').hidden = t;
-  $('#eRecLbl').textContent = t ? '기록 + 준비물' : '데이터 기록';
-}
 function openEdit(g) {
   const r = rowOf(g) || blankRow(g), gi = gInfo(g);
   T.editG = g;
   $('#editTitle').innerHTML = `<span class="dot" style="--gc:${gi.color}"></span>${clsLabel()} ${g}모둠 데이터 수정`;
   ROLE_KEYS.forEach(k => $('#eR_' + k).value = r.roles[k] || '');
-  $('#eThree').checked = r.three; applyEThree();
   $('#ePs').innerHTML = gi.v.map((v, i) => `<label class="epr"><span>${v} mL</span><input class="num sm" data-i="${i}" inputmode="decimal" value="${fin(r.p[i]) ? r.p[i] : ''}"><label class="check small"><input type="checkbox" data-r="${i}" ${r.ret && r.ret[i] ? 'checked' : ''}> 30 mL 복귀</label></label>`).join('');
   $('#eLeakChk').checked = r.leakChecked; $('#eLeakP').value = fin(r.leakP) ? r.leakP : '';
   $('#eSub').checked = r.submitted; $('#eAtt').value = r.attempts || 0;
@@ -1845,10 +1860,10 @@ async function saveEdit() {
   const ps = $$('#ePs input.num').map(i => parseP(i.value)), lp = parseP($('#eLeakP').value);
   const ret = $$('#ePs input[data-r]').map(c => c.checked);
   if (ps.some(x => Number.isNaN(x)) || Number.isNaN(lp)) { toast('압력은 숫자로 입력하세요. 예: 1.25', 'warn'); return; }
-  const three = $('#eThree').checked, v = id => $(id).value.trim();
+  const v = id => $(id).value.trim();
   const data = {
-    roles: { chromebook: v('#eR_chromebook'), recorder: v('#eR_recorder'), syringe: v('#eR_syringe'), supplies: three ? v('#eR_recorder') : v('#eR_supplies') },
-    three, p: ps.map(x => fin(x) ? x : null), ret, leakChecked: $('#eLeakChk').checked, leakP: fin(lp) ? lp : null,
+    roles: { syringe: v('#eR_syringe'), supplies: v('#eR_syringe'), recorder: v('#eR_recorder'), chromebook: v('#eR_recorder') },
+    three: false, p: ps.map(x => fin(x) ? x : null), ret, leakChecked: $('#eLeakChk').checked, leakP: fin(lp) ? lp : null,
     effort: $('#eEffort').value, conclusion: $('#eConcl').value, attempts: Math.max(0, parseInt($('#eAtt').value, 10) || 0),
   };
   const submitted = $('#eSub').checked;
@@ -1874,13 +1889,13 @@ function csvCell(v) {
   return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
 }
 function toCSV(list) {
-  const H = ['반', '모둠', '모둠색', '크롬북입력', '데이터기록', '주사기조작', '준비물수령', '3명모둠'];
+  const H = ['반', '모둠', '모둠색', '준비물수령·주사기조작', '데이터기록·크롬북입력'];
   for (let i = 1; i <= 5; i++) H.push(`V${i}(mL)`, `P${i}(기압)`, `PV${i}`, `복귀${i}`);
   H.push('PV범위밖개수', '누설확인', '누설압력', '누설의심', '오차줄이기노력', '결론', '결론정답', '채점시도', '제출', '수정시각', '제출시각');
   const lines = [H];
   list.slice().sort((a, b) => a.cls - b.cls || a.grp - b.grp).forEach(r => {
     const g = gInfo(r.grp);
-    const row = [r.cls || '샌드박스', r.grp, g.name, r.roles.chromebook, r.roles.recorder, r.roles.syringe, r.roles.supplies, r.three ? 'O' : ''];
+    const row = [r.cls || '샌드박스', r.grp, g.name, r.roles.syringe, r.roles.recorder];
     g.v.forEach((v, i) => { const p = r.p[i]; row.push(v, fin(p) ? p : '', fin(p) ? pvOf(p, v) : '', r.ret && r.ret[i] ? 'O' : ''); });
     row.push(pvBadIdx(r).length, r.leakChecked ? 'O' : '', fin(r.leakP) ? r.leakP : '', leakBad(r.leakP) ? 'O' : '',
       r.effort, r.conclusion, r.correct ? 'O' : 'X', r.attempts, r.submitted ? 'O' : '', r.updatedAt, r.submittedAt);
@@ -1902,9 +1917,9 @@ function sampleRows() {
   return GROUPS.map(g => {
     const p = g.v.map(v => round(PV_TARGET / v * (1 + (Math.random() - 0.5) * 0.05), 2));
     if (g.n === 3) p[1] = round(p[1] * 1.09, 2);              // 범위 밖 예시
-    const three = g.n === 5, n = i => names[(g.n + i) % names.length];
+    const n = i => names[(g.n * 2 + i) % names.length];
     return Object.assign(blankRow(g.n), {
-      roles: { chromebook: n(0), recorder: n(1), syringe: n(2), supplies: three ? n(1) : n(3) }, three, p,
+      roles: { syringe: n(0), supplies: n(0), recorder: n(1), chromebook: n(1) }, three: false, p,
       ret: [true, true, true, true, g.n !== 7], leakChecked: true, leakP: g.n === 6 ? 1.05 : 1,          // 누설 의심 예시
       effort: '온도를 일정하게 하기 위해 주사기를 손으로 오래 쥐지 않았고, 피스톤을 천천히 움직인 뒤 압력계 바늘이 멈추면 읽었다.',
       conclusion: g.n === 8 ? '압력이 커지면 부피가 작아진다.' : '기체의 압력과 부피는 반비례한다.',
@@ -1950,7 +1965,6 @@ $('#csvAll').onclick = () => {
   if (!T.all.length) { toast('내려받을 데이터가 없어요.', 'warn'); return; }
   download(toCSV(T.all), `보일법칙_전체_${ymd()}.csv`);
 };
-$('#eThree').onchange = applyEThree;
 $('#eCancel').onclick = closeEdit;
 $('#eSave').onclick = saveEdit;
 $('#editModal').addEventListener('click', e => { if (e.target.id === 'editModal') closeEdit(); });
