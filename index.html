@@ -171,6 +171,9 @@ input.num.fmt { border-color: var(--warn) !important; box-shadow: 0 0 0 4px rgba
 .banner { max-width: 1392px; margin: 12px auto 0; width: calc(100% - 48px); padding: 11px 18px; border-radius: 12px; font-weight: 800; font-size: 17px; }
 .banner.lock { background: rgba(247,189,71,.1); border: 1px solid rgba(247,189,71,.5); color: var(--accent); }
 .banner.demo { background: rgba(255,209,102,.07); border: 1px dashed rgba(255,209,102,.55); color: var(--warn); }
+.banner.sbx { display: flex; align-items: center; gap: 10px; white-space: nowrap; overflow: hidden; background: rgba(121,214,195,.08); border: 1px dashed rgba(121,214,195,.6); color: #9fe6d6; }
+.banner.sbx .sp { flex: 1; }
+.banner.sbx .btn { flex: none; }
 
 /* ---------- 다음에 입력할 곳 강조 ---------- */
 .next {
@@ -479,6 +482,7 @@ footer { text-align: right; color: var(--dim); font-size: 11px; line-height: 1.2
 </div>
 
 <div class="banner demo" id="demoBanner" hidden>미리보기 모드예요. 입력한 내용은 시트에 저장되지 않아요.</div>
+<div class="banner sbx" id="sbxBanner" hidden>🧪 교사 샌드박스 · 0~4쪽 자유 이동 · 잠금 없음 · 저장 안 됨<span class="sp"></span><button class="btn small" id="sbxFill">예시 값 채우기</button><button class="btn small ghost" id="sbxReset">↺ 처음부터</button></div>
 <div class="banner lock" id="lockBanner" hidden>🔒 최종 제출을 마쳤어요. 고쳐야 하면 선생님께 잠금 해제를 부탁하세요.</div>
 
 <main>
@@ -726,7 +730,7 @@ const APP_TITLE = '우리반 보일법칙 검증 실험';
 // 2-1) 사용법 영상 주소 — 따옴표 안의 주소만 바꾸면 '사용법 영상' 버튼이 그 영상으로 연결돼요.
 //      유튜브 주소(youtube.com/watch?v=… 또는 youtu.be/…)나 구글 드라이브 공유 주소 모두 돼요.
 //      비워 두면('') 버튼이 숨겨져요.
-const VIDEO_URL = 'https://www.youtube.com/watch?v=4IpMhKhOls4';
+const VIDEO_URL = 'https://youtu.be/1WWCwR8lYwI';
 
 // 3) 기본 설정
 const CLASS_COUNT = 11;      // 반 수 (Code.gs의 CLASS_COUNT와 같게)
@@ -1028,7 +1032,12 @@ function createPlot(canvas) {
 /* ===== 학생 앱 ===== */
 (() => {
 const DEMO = new URLSearchParams(location.search).has('demo');
-const LS = DEMO ? 'boyle_demo_' : 'boyle_v1_';
+// 교사 대시보드(로그인 상태)의 '학생 화면 미리보기'로 열었을 때만 진짜 샌드박스
+const SBX = DEMO && (() => {
+  try { const f = JSON.parse(localStorage.getItem('boyleT_pv') || 'null'); return !!(f && f.t && Date.now() - f.at < 6 * 3600e3); }
+  catch (e) { return false; }
+})();
+const LS = SBX ? 'boyle_sbx_' : DEMO ? 'boyle_demo_' : 'boyle_v1_';
 const ROLE_LABEL = { syringe: '준비물·주사기', recorder: '기록·크롬북' };
 
 const S = {
@@ -1220,7 +1229,7 @@ async function syncFromServer() {
 
 async function fetchClass() {
   if (!S.grp) return;
-  if (DEMO || !apiReady()) { S.stamp = DEMO ? '미리보기' : ''; updatePlot(); return; }
+  if (DEMO || !apiReady()) { if (SBX) S.others = sbxOthers(); S.stamp = SBX ? '샌드박스 예시' : DEMO ? '미리보기' : ''; updatePlot(); return; }
   const c = S.cls, btn = $('#refreshBtn');
   btn.classList.add('spin');
   try {
@@ -1233,6 +1242,13 @@ async function fetchClass() {
   } catch (e) {
     toast('다른 모둠 데이터를 아직 못 불러왔어요. 잠시 뒤 새로고침을 눌러 보세요.', 'warn');
   } finally { btn.classList.remove('spin'); }
+}
+// 샌드박스: 다른 모둠 예시 값 (한 번 만든 값은 그대로 유지)
+let SBX_O = null;
+const sbxP = v => round(PV_TARGET / v * (1 + (Math.random() - 0.5) * 0.05), 2);
+function sbxOthers() {
+  if (!SBX_O) { SBX_O = {}; GROUPS.forEach(g => { SBX_O[g.n] = { grp: g.n, p: g.v.map(sbxP) }; }); }
+  const o = {}; GROUPS.forEach(g => { if (g.n !== S.grp) o[g.n] = SBX_O[g.n]; }); return o;
 }
 function startPoll() { if (!S.poll) S.poll = setInterval(syncFromServer, 40000); }
 function stopPoll() { clearInterval(S.poll); S.poll = null; }
@@ -1287,23 +1303,22 @@ function rigSVG(V, P) {
   s += `<rect x="${cx + 84}" y="${my - 6}" width="${x0 - cx - 84}" height="12" rx="3" fill="rgba(124,196,255,.22)" stroke="#5f77ad" stroke-width="1.5"/>`;
   s += `<line x1="${cx + 86}" y1="${my}" x2="${x0}" y2="${my}" stroke="#9fd4ff" stroke-width="3" stroke-dasharray="5 6"/>`;
 
-  // ---------- 3방 밸브 (사진 왼쪽 '닫힘' 모양) ----------
-  // 투명 관이 좌우(압력계↔주사기)로 지나가고, 아래로 투명한 바깥 구멍이 있음.
-  // 파란 손잡이 날개는 위·왼쪽·오른쪽 → 왼쪽·오른쪽은 열리고, 날개가 없는 아래쪽(바깥)은 막힘.
+  // ---------- 3방 밸브 (실물과 같은 배치) ----------
+  // 투명 관이 좌우(압력계↔주사기)로 지나가고, 위로 투명한 바깥 구멍이 있음.
+  // 파란 손잡이 날개는 아래·왼쪽·오른쪽 → 왼쪽·오른쪽은 열리고, 날개가 없는 위쪽(바깥)은 막힘.
   const kx = 204;
   s += `<rect x="${kx - 34}" y="${my - 8}" width="68" height="16" rx="4" fill="rgba(220,235,255,.22)" stroke="#c9d8f0" stroke-width="1.5"/>`;   // 투명 몸통
-  s += `<rect x="${kx - 9}" y="${my + 6}" width="18" height="38" rx="3" fill="rgba(220,235,255,.22)" stroke="#c9d8f0" stroke-width="1.5"/>`;  // 아래쪽 바깥 구멍(투명)
-  s += `<rect x="${kx - 3}" y="${my + 12}" width="6" height="30" fill="#0b1426"/>`;
-  s += `<line x1="${kx - 8}" y1="${my + 50}" x2="${kx + 8}" y2="${my + 64}" stroke="#ff7777" stroke-width="4" stroke-linecap="round"/><line x1="${kx + 8}" y1="${my + 50}" x2="${kx - 8}" y2="${my + 64}" stroke="#ff7777" stroke-width="4" stroke-linecap="round"/>`;
-  s += `<text x="${kx - 14}" y="${my + 63}" text-anchor="end" font-size="16" font-weight="900" fill="#ff9a9a">바깥 막힘</text>`;
-  // 파란 손잡이: 왼쪽·오른쪽·위 날개 + 가운데 둥근 축
+  s += `<rect x="${kx - 9}" y="${my - 44}" width="18" height="38" rx="3" fill="rgba(220,235,255,.22)" stroke="#c9d8f0" stroke-width="1.5"/>`;  // 위쪽 바깥 구멍(투명)
+  s += `<rect x="${kx - 3}" y="${my - 42}" width="6" height="30" fill="#0b1426"/>`;
+  s += `<line x1="${kx - 8}" y1="${my - 64}" x2="${kx + 8}" y2="${my - 50}" stroke="#ff7777" stroke-width="4" stroke-linecap="round"/><line x1="${kx + 8}" y1="${my - 64}" x2="${kx - 8}" y2="${my - 50}" stroke="#ff7777" stroke-width="4" stroke-linecap="round"/>`;
+  s += `<text x="${kx - 14}" y="${my - 51}" text-anchor="end" font-size="16" font-weight="900" fill="#ff9a9a">바깥 막힘</text>`;
   s += `<path d="M ${kx - 38} ${my - 6} L ${kx - 10} ${my - 9} L ${kx - 10} ${my + 9} L ${kx - 38} ${my + 6} Z" fill="#2f6fe0"/>`;
   s += `<path d="M ${kx + 38} ${my - 6} L ${kx + 10} ${my - 9} L ${kx + 10} ${my + 9} L ${kx + 38} ${my + 6} Z" fill="#2f6fe0"/>`;
-  s += `<path d="M ${kx - 7} ${my - 8} L ${kx + 7} ${my - 8} L ${kx + 5} ${my - 42} L ${kx - 5} ${my - 42} Z" fill="#2f6fe0"/>`;
+  s += `<path d="M ${kx - 7} ${my + 8} L ${kx + 7} ${my + 8} L ${kx + 5} ${my + 42} L ${kx - 5} ${my + 42} Z" fill="#2f6fe0"/>`;   // 아래쪽 손잡이
   s += `<circle cx="${kx}" cy="${my}" r="15" fill="#3b82f6" stroke="#9cc3ff" stroke-width="1.5"/>`;
   s += `<circle cx="${kx}" cy="${my}" r="6" fill="#0f2a5c"/>`;
   s += `<line x1="${kx - 34}" y1="${my}" x2="${kx + 34}" y2="${my}" stroke="#9fd4ff" stroke-width="2.5" stroke-dasharray="4 4" opacity=".9"/>`;   // 열린 길
-  s += `<text x="${kx}" y="${my - 50}" text-anchor="middle" font-size="18" font-weight="900" fill="#9cc3ff">3방 밸브</text>`;
+  s += `<text x="${kx - 10}" y="${my + 62}" text-anchor="middle" font-size="18" font-weight="900" fill="#9cc3ff">3방 밸브</text>`;
 
   // ---------- 주사기 ----------
   s += `<rect x="${x0 - 22}" y="${my - 7}" width="24" height="14" rx="3" fill="#cfd8ea" fill-opacity=".35" stroke="#8fa3cc" stroke-width="1.5"/>`; // 노즐
@@ -1436,10 +1451,10 @@ function updateDerived() {
   const lp = parseP(d.leakRaw), lm = $('#leakMsg');
   const preOk = d.leakChecked && fin(lp), off = d.submitted || !S.grp;
   const psNow = pressures();
-  $$('.pIn').forEach(inp => { const i = +inp.dataset.i; const prevOk = i === 0 || (fin(psNow[i - 1]) && d.ret[i - 1]); inp.disabled = off || !preOk || !prevOk; });
-  $$('.retChk').forEach(cb => { const i = +cb.dataset.i; cb.checked = !!d.ret[i]; cb.disabled = off || !preOk || !fin(psNow[i]); cb.closest('.retWrap').classList.toggle('filled', !!d.ret[i]); });
-  $('#leakChk').disabled = off || (!fin(lp) && !d.leakChecked);
-  $('#tableCard').classList.toggle('waiting', !!S.grp && !preOk);
+  $$('.pIn').forEach(inp => { const i = +inp.dataset.i; const prevOk = i === 0 || (fin(psNow[i - 1]) && d.ret[i - 1]); inp.disabled = off || (!SBX && (!preOk || !prevOk)); });
+  $$('.retChk').forEach(cb => { const i = +cb.dataset.i; cb.checked = !!d.ret[i]; cb.disabled = off || (!SBX && (!preOk || !fin(psNow[i]))); cb.closest('.retWrap').classList.toggle('filled', !!d.ret[i]); });
+  $('#leakChk').disabled = off || (!SBX && !fin(lp) && !d.leakChecked);
+  $('#tableCard').classList.toggle('waiting', !SBX && !!S.grp && !preOk);
   $('#leakP').classList.toggle('bad', Number.isNaN(lp));
   $('#leakP').classList.toggle('filled', fin(lp) && !leakBad(lp));
   $('#leakP').classList.toggle('fmt', fin(lp) && !dec2(d.leakRaw));
@@ -1495,7 +1510,7 @@ function updatePlot() {
 
 function go(n, quiet) {
   n = Math.max(0, Math.min(4, n));
-  if (n > 1 && !S.grp) { Sound.play('warn'); toast('먼저 반과 모둠을 고르세요.', 'warn'); n = 1; }
+  if (n > 1 && !S.grp) { if (SBX) enter(S.selC || 1, S.selG || 1); else { Sound.play('warn'); toast('먼저 반과 모둠을 고르세요.', 'warn'); n = 1; } }
   if (!quiet && n !== S.page) Sound.play('page');
   S.page = n;
   $$('.page').forEach(p => p.classList.toggle('on', +p.dataset.page === n));
@@ -1645,7 +1660,25 @@ if (VIDEO_URL && VIDEO_URL.trim()) $('#videoBtn').href = VIDEO_URL.trim(); else 
 $('#soundBtn').textContent = Sound.on ? '🔊' : '🔇';
 buildChips();
 plot = createPlot($('#plot'));
-if (DEMO) $('#demoBanner').hidden = false;
+if (SBX) {
+  $('#sbxBanner').hidden = false;
+  $('#sbxFill').onclick = () => {
+    if (!S.grp) enter(S.selC || 1, S.selG || 1);
+    const d = S.d, g = G();
+    d.submitted = false; d.roles.syringe = d.roles.syringe || '김민준'; d.roles.recorder = d.roles.recorder || '이서연';
+    d.leakRaw = '1.00'; d.leakChecked = true;
+    d.pRaw = g.v.map(v => sbxP(v).toFixed(2)); d.ret = g.v.map(() => true);
+    if (d.effort.trim().length < MIN_EFFORT_LEN) d.effort = '주사기를 손으로 오래 쥐지 않았고, 피스톤을 천천히 움직인 뒤 바늘이 멈추면 읽었다.';
+    markDirty(); renderAll(); Sound.play('step'); toast('예시 값을 채웠어요. 결론은 직접 써 보세요.', 'ok');
+  };
+  $('#sbxReset').onclick = () => {
+    if (!confirm('샌드박스에 입력한 내용을 모두 지우고 처음부터 할까요?')) return;
+    try { Object.keys(localStorage).filter(k => k.startsWith(LS)).forEach(k => localStorage.removeItem(k)); sessionStorage.removeItem(LS + 'cur'); } catch (e) {}
+    S.d = blank(); S.cls = S.grp = S.selC = S.selG = null; S.others = {}; SBX_O = null;
+    $('#who').textContent = '반과 모둠을 고르세요'; renderAll(); go(0); toast('처음 상태로 되돌렸어요.', 'ok');
+  };
+}
+else if (DEMO) $('#demoBanner').hidden = false;
 else if (!apiReady()) setPill('서버 주소 미설정', 'warn');
 let cur = null;
 try { cur = JSON.parse(sessionStorage.getItem(LS + 'cur') || 'null'); } catch (e) {}
@@ -1698,6 +1731,7 @@ function showLogin(msg = '') {
 function logout(msg) {
   T.token = ''; T.name = ''; T.all = []; T.sandbox = false; $('#sbChk').checked = false; $('#sbBar').hidden = true;
   sessionStorage.removeItem('boyleT_token'); sessionStorage.removeItem('boyleT_name');
+  try { localStorage.removeItem('boyleT_pv'); } catch (e) {}
   setAuto(false); showLogin(msg || '');
 }
 async function login() {
@@ -1980,6 +2014,11 @@ document.title = APP_TITLE + ' 교사 대시보드';
 $('#tAppTitle').textContent = APP_TITLE;
 $('#stuUrl').textContent = location.href.split('#')[0].split('?')[0];
 $('#previewLink').href = location.href.split('#')[0].split('?')[0] + '?demo=1';
+// 로그인한 교사가 누를 때만 샌드박스 허가 표시를 남김 (학생이 주소만 입력하면 일반 미리보기)
+$('#previewLink').addEventListener('click', e => {
+  if (!T.token) { e.preventDefault(); showLogin('로그인한 뒤에 학생 화면 미리보기를 쓸 수 있어요.'); return; }
+  try { localStorage.setItem('boyleT_pv', JSON.stringify({ t: 1, at: Date.now() })); } catch (err) {}
+});
 plot = createPlot($('#tPlot'));
 if (T.token) { showDash(); fetchAll(); } else showLogin('');
 fitText($('#tBrand'), 12); fitText($('#stuUrl'), 9);
